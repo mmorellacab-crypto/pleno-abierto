@@ -1,7 +1,7 @@
 import React from 'react';
 import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { BarraVotos, ChipTema, Cifras, Etiqueta, Resultado } from '../componentes';
-import { UI, fechaCorta } from '../estilo';
+import { BarraVotos, ChipTema, Cifras, Etiqueta, MarcaPartido, Resultado, Titulo } from '../componentes';
+import { SERIF, UI, fechaCorta } from '../estilo';
 import type { Dataset, Ley } from '../tipos';
 
 export default function Detalle({ ley, datos }: { ley: Ley; datos: Dataset }) {
@@ -15,7 +15,7 @@ export default function Detalle({ ley, datos }: { ley: Ley; datos: Dataset }) {
       <Text style={s.fecha}>
         {fechaCorta(ley.fecha)} · {ley.tipo}
       </Text>
-      <Text style={s.titulo}>{ley.titulo}</Text>
+      <Titulo tam={19}>{ley.titulo}</Titulo>
       {ley.apartado ? <Text style={s.apartado}>{ley.apartado}</Text> : null}
 
       <View style={s.caja}>
@@ -38,6 +38,7 @@ export default function Detalle({ ley, datos }: { ley: Ley; datos: Dataset }) {
             return (
               <View key={cod} style={s.grupo}>
                 <View style={s.gCab}>
+                  <MarcaPartido cod={cod} alto={32} />
                   <View style={{ flex: 1 }}>
                     <Text style={s.gNombre}>{g.corto}</Text>
                     <Text style={s.gLargo}>{g.nombre}</Text>
@@ -93,13 +94,12 @@ const s = StyleSheet.create({
   cont: { padding: 16, paddingBottom: 48, gap: 10 },
   meta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   fecha: { color: UI.texto3, fontSize: 13 },
-  titulo: { fontSize: 18, lineHeight: 25, color: UI.texto, fontWeight: '600' },
-  apartado: { color: UI.texto2, fontSize: 14 },
-  caja: { backgroundColor: UI.superficie, borderRadius: UI.radio, padding: 14, gap: 8, marginTop: 4 },
-  h: { fontSize: 13, fontWeight: '700', color: UI.texto2, textTransform: 'uppercase', letterSpacing: 0.5 },
+    apartado: { color: UI.texto2, fontSize: 14 },
+  caja: { backgroundColor: UI.superficie, borderRadius: UI.radio, padding: 16, gap: 8, marginTop: 4 },
+  h: { fontSize: 16, fontWeight: '700', color: UI.marca2, fontFamily: SERIF },
   nota: { color: UI.texto3, fontSize: 12, lineHeight: 17 },
   grupo: { paddingVertical: 8, borderTopWidth: 1, borderTopColor: UI.linea, gap: 6 },
-  gCab: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  gCab: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   gNombre: { fontSize: 15, fontWeight: '700', color: UI.texto },
   gLargo: { fontSize: 12, color: UI.texto3 },
   gCifras: { fontSize: 12, color: UI.texto2 },

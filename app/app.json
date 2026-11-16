@@ -9,13 +9,13 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#fcfcfb"
+      "backgroundColor": "#1E1B4B"
     },
     "android": {
       "package": "es.plenoabierto.app",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#fcfcfb",
+        "backgroundColor": "#1E1B4B",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"

@@ -33,10 +33,18 @@ Cita usada: «Origen de los datos: Congreso de los Diputados — Datos abiertos�
 - Cambios realizados (requisito CC BY): hemos vinculado cada ley con su votación oficial del Congreso y recalculado el resultado y el voto por grupo a partir de los datos oficiales.
 - Aviso: los temas están generados con IA, son orientativos y pueden contener errores.
 
-## 3. No afiliación
+## 3. Test «Brújula»
+
+- 40 preguntas en 6 dimensiones (economía, valores sociales, autoridad, inmigración, territorio y medio ambiente), orientadas como el Chapel Hill Expert Survey.
+- Procedencia de los ítems: European Social Survey, ISSP, European Values Study, CIS (organización territorial y pregunta Linz–Moreno), escala NEP revisada (Dunlap et al., 2000), valores de crianza (Feldman y Stenner, 1997). Algunas afirmaciones sobre leyes concretas siguen el formato de las aplicaciones de consejo de voto (Garzia y Marschall, 2012). Cada pregunta muestra su fuente en la app; el banco completo y las referencias están en `app/src/test/modelo.ts`.
+- Los grupos se sitúan solo con sus votos oficiales en las leyes vinculadas (escalado conjunto con votaciones; Bafumi y Herron, 2010). La afinidad usa distancia media por pregunta (Louwerse y Rosema, 2014).
+- Salvaguardas: ítems con redacción equilibrada (a favor y en contra) para limitar la aquiescencia (Krosnick, 1999); los grupos solo se sitúan en dimensiones con al menos dos leyes distintas; se advierte de la dinámica gobierno–oposición (Hix y Noury, 2016); no es una recomendación de voto y las respuestas no salen del dispositivo.
+- `npm run validar-test` (en `app/`) comprueba el banco de preguntas y el cálculo en cada compilación.
+
+## 4. No afiliación
 
 Pleno Abierto es independiente: no representa al Congreso de los Diputados, a ninguna administración pública ni a ningún partido político, y no está afiliada a El Congreso en tu mano. Este aviso aparece en la app, en la web y debe figurar en la ficha de Google Play (política de Google sobre apps que comunican información gubernamental).
 
-## 4. Gratuidad
+## 5. Gratuidad
 
 La app es y será gratuita: sin anuncios, sin compras dentro de la app, sin suscripciones y sin recogida de datos. La licencia GPL-3.0 garantiza que el código siga siendo libre.

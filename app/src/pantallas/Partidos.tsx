@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { Boton, ChipTema } from '../componentes';
-import { UI, VOTO } from '../estilo';
+import { ChipPartido, ChipTema, Titulo } from '../componentes';
+import { SERIF, UI, VOTO, colorPartido } from '../estilo';
 import { coincidencia, resumenPorTema } from '../filtros';
 import type { Dataset, Postura } from '../tipos';
 
@@ -19,37 +19,42 @@ export default function Partidos({ datos }: { datos: Dataset }) {
         .sort((a, b) => b.pct - a.pct),
     [datos, grupo],
   );
+  const c = colorPartido(grupo);
 
   return (
     <ScrollView contentContainerStyle={s.cont}>
-      <Text style={s.h}>Elige un grupo parlamentario</Text>
       <View style={s.fila}>
-        {codigos.map((c) => (
-          <Boton key={c} texto={datos.grupos[c].corto} activo={grupo === c} onPress={() => setGrupo(c)} />
+        {codigos.map((cod) => (
+          <ChipPartido key={cod} cod={cod} nombre={datos.grupos[cod].corto} activo={grupo === cod} onPress={() => setGrupo(cod)} />
         ))}
       </View>
-      <Text style={s.nombre}>{datos.grupos[grupo].nombre}</Text>
 
-      <View style={s.leyenda}>
-        {ORDEN.slice(0, 4).map((p) => (
-          <View key={p} style={s.ley}>
-            <View style={[s.punto, { backgroundColor: VOTO[p].color }]} />
-            <Text style={s.leyTxt}>{VOTO[p].texto}</Text>
-          </View>
-        ))}
+      <View style={[s.ficha, { backgroundColor: c.color }]}>
+        <Text style={[s.fichaCorto, { color: c.tinta }]}>{datos.grupos[grupo].corto}</Text>
+        <Text style={[s.fichaLargo, { color: c.tinta }]}>{datos.grupos[grupo].nombre}</Text>
       </View>
 
       <View style={s.caja}>
-        <Text style={s.h}>Cómo votó en cada tema</Text>
+        <Titulo tam={17}>Cómo votó en cada tipo de ley</Titulo>
+        <View style={s.leyenda}>
+          {ORDEN.slice(0, 4).map((p) => (
+            <View key={p} style={s.ley}>
+              <View style={[s.punto, { backgroundColor: VOTO[p].color }]} />
+              <Text style={s.leyTxt}>{VOTO[p].texto}</Text>
+            </View>
+          ))}
+        </View>
         {filas.map(({ tema, cuenta, total }) => (
           <View key={tema.id} style={s.tema}>
             <View style={s.temaCab}>
               <ChipTema id={tema.id} nombre={tema.nombre} pequeño />
-              <Text style={s.n}>{total} {total === 1 ? 'ley' : 'leyes'}</Text>
+              <Text style={s.n}>
+                {total} {total === 1 ? 'ley' : 'leyes'}
+              </Text>
             </View>
             <View style={s.barra}>
               {ORDEN.filter((p) => cuenta[p] > 0).map((p) => (
-                <View key={p} style={{ flex: cuenta[p], backgroundColor: VOTO[p].color, borderRadius: 3, justifyContent: 'center' }}>
+                <View key={p} style={{ flex: cuenta[p], backgroundColor: VOTO[p].color, borderRadius: 5, justifyContent: 'center' }}>
                   {cuenta[p] / total >= 0.15 ? <Text style={[s.num, { color: VOTO[p].tinta }]}>{cuenta[p]}</Text> : null}
                 </View>
               ))}
@@ -60,12 +65,12 @@ export default function Partidos({ datos }: { datos: Dataset }) {
       </View>
 
       <View style={s.caja}>
-        <Text style={s.h}>Con quién coincide</Text>
-        {afinidad.map(({ c, pct, n }) => (
-          <View key={c} style={s.af}>
-            <Text style={s.afNombre}>{datos.grupos[c].corto}</Text>
+        <Titulo tam={17}>Con quién coincide</Titulo>
+        {afinidad.map(({ c: otro, pct, n }) => (
+          <View key={otro} style={s.af}>
+            <Text style={s.afNombre}>{datos.grupos[otro].corto}</Text>
             <View style={s.afPista}>
-              <View style={[s.afBarra, { width: `${pct}%` }]} />
+              <View style={[s.afBarra, { width: `${pct}%`, backgroundColor: colorPartido(otro).color }]} />
             </View>
             <Text style={s.afPct}>{pct} %</Text>
             <Text style={s.afN}>({n})</Text>
@@ -78,15 +83,16 @@ export default function Partidos({ datos }: { datos: Dataset }) {
 }
 
 const s = StyleSheet.create({
-  cont: { padding: 16, paddingBottom: 48, gap: 10 },
-  h: { fontSize: 13, fontWeight: '700', color: UI.texto2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  cont: { padding: 16, paddingBottom: 48, gap: 12 },
   fila: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  nombre: { fontSize: 20, fontWeight: '700', color: UI.texto, marginTop: 6 },
+  ficha: { borderRadius: UI.radio, padding: 16 },
+  fichaCorto: { fontFamily: SERIF, fontSize: 28, fontWeight: '700' },
+  fichaLargo: { fontSize: 14, opacity: 0.9 },
   leyenda: { flexDirection: 'row', gap: 14, flexWrap: 'wrap' },
   ley: { flexDirection: 'row', alignItems: 'center', gap: 5 },
   leyTxt: { color: UI.texto2, fontSize: 13 },
   punto: { width: 10, height: 10, borderRadius: 5 },
-  caja: { backgroundColor: UI.superficie, borderRadius: UI.radio, padding: 14, gap: 10 },
+  caja: { backgroundColor: UI.superficie, borderRadius: UI.radio, padding: 16, gap: 10 },
   tema: { gap: 5 },
   temaCab: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   n: { color: UI.texto3, fontSize: 12 },
@@ -95,8 +101,8 @@ const s = StyleSheet.create({
   nota: { color: UI.texto3, fontSize: 12 },
   af: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   afNombre: { width: 70, fontSize: 14, color: UI.texto, fontWeight: '600' },
-  afPista: { flex: 1, height: 10, backgroundColor: '#efeeea', borderRadius: 4, overflow: 'hidden' },
-  afBarra: { height: 10, backgroundColor: '#1c5cab', borderRadius: 4 },
+  afPista: { flex: 1, height: 12, backgroundColor: '#EFEFF6', borderRadius: 6, overflow: 'hidden' },
+  afBarra: { height: 12, borderRadius: 6 },
   afPct: { width: 44, textAlign: 'right', fontSize: 13, color: UI.texto, fontWeight: '700' },
   afN: { width: 34, fontSize: 11, color: UI.texto3 },
 });

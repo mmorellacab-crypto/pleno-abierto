@@ -44,6 +44,10 @@ jobs:
         working-directory: app
         run: npx tsc --noEmit
 
+      - name: Validar el test Brújula
+        working-directory: app
+        run: npm run validar-test
+
       - name: Copiar los datos más recientes a la app
         run: cp docs/data/dataset.json app/assets/dataset.json
 

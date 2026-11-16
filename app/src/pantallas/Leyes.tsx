@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { FlatList, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { BarraVotos, Boton, ChipTema, Etiqueta, Resultado } from '../componentes';
-import { TEMAS, TEMA_DESCONOCIDO, UI, VOTO, fechaCorta } from '../estilo';
+import { BarraVotos, Boton, ChipPartido, ChipTema, Etiqueta, Resultado, Seccion } from '../componentes';
+import { SERIF, TEMAS, TEMA_DESCONOCIDO, UI, VOTO, colorPartido, fechaCorta } from '../estilo';
 import { FILTROS_INICIALES, Filtros, alternar, filtrar } from '../filtros';
 import type { Dataset, Ley, Postura } from '../tipos';
 
@@ -17,26 +17,31 @@ export default function Leyes({ datos, abrir }: { datos: Dataset; abrir: (l: Ley
 
   const cabecera = (
     <View style={s.cab}>
-      <TextInput
-        value={f.texto}
-        onChangeText={(texto) => setF({ ...f, texto })}
-        placeholder="Buscar en el título oficial…"
-        placeholderTextColor={UI.texto3}
-        style={s.buscar}
-        accessibilityLabel="Buscar leyes"
-      />
-      <Pressable onPress={() => setVerFiltros(!verFiltros)} style={s.plegar} accessibilityRole="button">
-        <Text style={s.plegarTxt}>{verFiltros ? '▾ Ocultar filtros' : '▸ Mostrar filtros'}</Text>
+      <View style={s.buscarCaja}>
+        <Text style={s.lupa}>⌕</Text>
+        <TextInput
+          value={f.texto}
+          onChangeText={(texto) => setF({ ...f, texto })}
+          placeholder="Buscar en el título oficial"
+          placeholderTextColor={UI.texto3}
+          style={s.buscar}
+          accessibilityLabel="Buscar leyes"
+        />
+      </View>
+      <View style={s.plegar}>
+        <Pressable onPress={() => setVerFiltros(!verFiltros)} accessibilityRole="button">
+          <Text style={s.plegarTxt}>{verFiltros ? 'Ocultar filtros' : 'Mostrar filtros'}</Text>
+        </Pressable>
         {hayFiltros ? (
           <Pressable onPress={() => setF(FILTROS_INICIALES)} accessibilityRole="button">
-            <Text style={s.limpiar}>Quitar filtros</Text>
+            <Text style={s.limpiar}>Quitar filtros ✕</Text>
           </Pressable>
         ) : null}
-      </Pressable>
+      </View>
 
       {verFiltros && (
-        <>
-          <Text style={s.titulo}>Tema</Text>
+        <View style={s.panel}>
+          <Seccion>Tipo de ley</Seccion>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.fila}>
             {datos.temas.map((t) => (
               <ChipTema
@@ -49,12 +54,13 @@ export default function Leyes({ datos, abrir }: { datos: Dataset; abrir: (l: Ley
             ))}
           </ScrollView>
 
-          <Text style={s.titulo}>Partido (grupo parlamentario)</Text>
+          <Seccion>Partido</Seccion>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.fila}>
             {grupos.map(([cod, g]) => (
-              <Boton
+              <ChipPartido
                 key={cod}
-                texto={g.corto}
+                cod={cod}
+                nombre={g.corto}
                 activo={f.grupo === cod}
                 onPress={() => setF({ ...f, grupo: f.grupo === cod ? null : cod, posturas: [] })}
               />
@@ -63,7 +69,7 @@ export default function Leyes({ datos, abrir }: { datos: Dataset; abrir: (l: Ley
 
           {f.grupo && (
             <>
-              <Text style={s.titulo}>Qué votó {datos.grupos[f.grupo].corto}</Text>
+              <Seccion>Qué votó {datos.grupos[f.grupo].corto}</Seccion>
               <View style={[s.fila, s.envolver]}>
                 {POSTURAS.map((p) => {
                   const on = f.posturas.includes(p);
@@ -85,13 +91,13 @@ export default function Leyes({ datos, abrir }: { datos: Dataset; abrir: (l: Ley
             </>
           )}
 
-          <Text style={s.titulo}>Resultado</Text>
+          <Seccion>Resultado</Seccion>
           <View style={[s.fila, s.envolver]}>
             {(['todas', 'aprobadas', 'rechazadas'] as const).map((r) => (
               <Boton key={r} texto={r[0].toUpperCase() + r.slice(1)} activo={f.resultado === r} onPress={() => setF({ ...f, resultado: r })} />
             ))}
           </View>
-        </>
+        </View>
       )}
       <Text style={s.cuenta}>
         {lista.length} de {datos.leyes.length} leyes y decretos
@@ -130,88 +136,115 @@ function Tarjeta({
   const m = TEMAS[ley.tema] ?? TEMA_DESCONOCIDO;
   const posturaSel = grupoSel ? ley.grupos?.[grupoSel]?.postura : null;
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [s.tarjeta, { borderLeftColor: m.borde }, pressed && { opacity: 0.85 }]} accessibilityRole="button">
-      <View style={s.meta}>
-        <ChipTema id={ley.tema} nombre={nombreTema} pequeño />
+    <Pressable onPress={onPress} style={({ pressed }) => [s.tarjeta, pressed && { opacity: 0.88 }]} accessibilityRole="button">
+      <View style={[s.franja, { backgroundColor: m.fondo }]}>
+        <Text style={s.franjaTxt}>
+          {m.icono} {nombreTema}
+        </Text>
         <Text style={s.fecha}>{fechaCorta(ley.fecha)}</Text>
-        <View style={{ flex: 1 }} />
-        <Resultado aprobada={ley.aprobada} />
       </View>
-      <Text style={s.tTitulo} numberOfLines={3}>
-        {ley.titulo}
-      </Text>
-      {grupoSel && (
-        <View style={s.sel}>
-          <Text style={s.selTxt}>{grupos[grupoSel].corto} votó</Text>
-          {posturaSel ? <Etiqueta postura={posturaSel} grande /> : <Text style={s.selSin}>sin voto nominal publicado</Text>}
+      <View style={s.cuerpo}>
+        <Text style={s.tTitulo} numberOfLines={3}>
+          {ley.titulo}
+        </Text>
+        <View style={s.lineaRes}>
+          <Resultado aprobada={ley.aprobada} />
+          <Text style={s.mini}>
+            {ley.totales.si} sí · {ley.totales.no} no · {ley.totales.abstencion} abst.
+          </Text>
         </View>
-      )}
-      <View style={{ marginTop: 10 }}>
-        <BarraVotos t={ley.totales} />
+        <BarraVotos t={ley.totales} alto={8} />
+        {grupoSel && (
+          <View style={s.sel}>
+            <View style={[s.puntoGrande, { backgroundColor: colorPartido(grupoSel).color }]} />
+            <Text style={s.selTxt}>{grupos[grupoSel].corto} votó</Text>
+            {posturaSel ? <Etiqueta postura={posturaSel} grande /> : <Text style={s.selSin}>sin voto nominal publicado</Text>}
+          </View>
+        )}
+        {ley.grupos ? (
+          <View style={s.grupos}>
+            {Object.entries(grupos).map(([cod, g]) => {
+              const p = ley.grupos?.[cod]?.postura;
+              if (!p) return null;
+              return (
+                <View key={cod} style={[s.gPill, grupoSel && grupoSel !== cod && { opacity: 0.35 }]}>
+                  <View style={[s.punto, { backgroundColor: colorPartido(cod).color }]} />
+                  <Text style={s.gPillTxt}>{g.corto}</Text>
+                  <View style={[s.gVoto, { backgroundColor: VOTO[p].color }]}>
+                    <Text style={[s.gVotoTxt, { color: VOTO[p].tinta }]}>{VOTO[p].icono}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        ) : (
+          <Text style={s.aviso}>Sin voto por grupo: el Congreso no publica voto nominal de esta votación en datos abiertos.</Text>
+        )}
       </View>
-      {ley.grupos ? (
-        <View style={s.grupos}>
-          {Object.entries(grupos).map(([cod, g]) => {
-            const p = ley.grupos?.[cod]?.postura;
-            if (!p) return null;
-            return (
-              <View key={cod} style={[s.gPill, { backgroundColor: VOTO[p].color }, grupoSel && grupoSel !== cod && { opacity: 0.35 }]}>
-                <Text style={[s.gPillTxt, { color: VOTO[p].tinta }]}>
-                  {VOTO[p].icono} {g.corto}
-                </Text>
-              </View>
-            );
-          })}
-        </View>
-      ) : (
-        <Text style={s.aviso}>Sin voto por grupo: el Congreso no publica voto nominal de esta votación en datos abiertos.</Text>
-      )}
     </Pressable>
   );
 }
 
 const s = StyleSheet.create({
-  lista: { padding: 14, paddingBottom: 40, gap: 12 },
-  cab: { gap: 8, marginBottom: 4 },
-  buscar: {
+  lista: { padding: 14, paddingBottom: 40, gap: 14 },
+  cab: { gap: 8, marginBottom: 2 },
+  buscarCaja: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: UI.superficie,
-    borderRadius: UI.radio,
-    borderWidth: 1,
+    borderRadius: 14,
+    borderWidth: 1.5,
     borderColor: UI.linea,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    fontSize: 16,
-    color: UI.texto,
+    paddingHorizontal: 12,
   },
-  plegar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 2 },
-  plegarTxt: { color: UI.acento, fontWeight: '600' },
-  limpiar: { color: UI.texto2, textDecorationLine: 'underline' },
-  titulo: { fontSize: 13, fontWeight: '700', color: UI.texto2, marginTop: 6, textTransform: 'uppercase', letterSpacing: 0.5 },
+  lupa: { fontSize: 20, color: UI.texto3, marginRight: 6 },
+  buscar: { flex: 1, paddingVertical: 11, fontSize: 16, color: UI.texto },
+  plegar: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 2 },
+  plegarTxt: { color: UI.acento, fontWeight: '700' },
+  limpiar: { color: UI.texto2 },
+  panel: { backgroundColor: UI.superficie, borderRadius: UI.radio, padding: 14, gap: 6 },
   fila: { flexDirection: 'row', gap: 8, paddingVertical: 2 },
   envolver: { flexWrap: 'wrap' },
-  voto: { borderWidth: 2, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6 },
-  votoTxt: { fontWeight: '600', fontSize: 14 },
-  cuenta: { color: UI.texto3, marginTop: 8, fontSize: 13 },
+  voto: { borderWidth: 2, borderRadius: UI.radioChip, paddingHorizontal: 12, paddingVertical: 6 },
+  votoTxt: { fontWeight: '700', fontSize: 14 },
+  cuenta: { color: UI.texto3, marginTop: 4, fontSize: 13, paddingHorizontal: 2 },
   vacio: { textAlign: 'center', color: UI.texto2, marginTop: 30 },
   tarjeta: {
     backgroundColor: UI.superficie,
     borderRadius: UI.radio,
-    padding: 14,
-    borderLeftWidth: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 1,
+    overflow: 'hidden',
+    shadowColor: '#1E1B4B',
+    shadowOpacity: 0.07,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 2,
   },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  fecha: { color: UI.texto3, fontSize: 12 },
-  tTitulo: { fontSize: 15, lineHeight: 21, color: UI.texto, marginTop: 8, fontWeight: '500' },
-  sel: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10 },
-  selTxt: { color: UI.texto2, fontWeight: '600' },
+  franja: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 7 },
+  franjaTxt: { fontSize: 13, fontWeight: '700', color: UI.texto },
+  fecha: { color: UI.texto2, fontSize: 12 },
+  cuerpo: { padding: 14, gap: 9 },
+  tTitulo: { fontFamily: SERIF, fontSize: 16, lineHeight: 22, color: UI.texto },
+  lineaRes: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  mini: { color: UI.texto3, fontSize: 12 },
+  sel: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  puntoGrande: { width: 12, height: 12, borderRadius: 6 },
+  selTxt: { color: UI.texto2, fontWeight: '700' },
   selSin: { color: UI.texto3, fontStyle: 'italic' },
-  grupos: { flexDirection: 'row', flexWrap: 'wrap', gap: 5, marginTop: 10 },
-  gPill: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
-  gPillTxt: { fontSize: 11, fontWeight: '700' },
-  aviso: { color: UI.texto3, fontSize: 12, marginTop: 8, fontStyle: 'italic' },
+  grupos: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  gPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    borderWidth: 1,
+    borderColor: UI.linea,
+    borderRadius: 8,
+    paddingLeft: 6,
+    paddingRight: 3,
+    paddingVertical: 2,
+  },
+  punto: { width: 8, height: 8, borderRadius: 4 },
+  gPillTxt: { fontSize: 11, fontWeight: '700', color: UI.texto },
+  gVoto: { width: 17, height: 17, borderRadius: 5, alignItems: 'center', justifyContent: 'center' },
+  gVotoTxt: { fontSize: 11, fontWeight: '900' },
+  aviso: { color: UI.texto3, fontSize: 12, fontStyle: 'italic' },
 });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { UI, fechaCorta } from '../estilo';
+import { SERIF, UI, fechaCorta } from '../estilo';
 import type { Dataset } from '../tipos';
 import { Enlace } from './Detalle';
 import { APP } from '../app-info';
@@ -23,7 +23,7 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
       </View>
 
       <View style={s.caja}>
-        <Text style={s.h}>1 · Fuente oficial</Text>
+        <Text style={s.h}>Fuente oficial</Text>
         <Text style={s.p}>
           <Text style={s.b}>Origen de los datos: {congreso.nombre}.</Text> {congreso.uso} Los totales se muestran tal como
           los publica el Congreso; el recuento por grupo es una suma del voto nominal oficial y no altera la información.
@@ -33,7 +33,7 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
       </View>
 
       <View style={s.caja}>
-        <Text style={s.h}>2 · El Congreso en tu mano</Text>
+        <Text style={s.h}>El Congreso en tu mano</Text>
         <Text style={s.p}>
           <Text style={s.b}>«El Congreso en tu mano» (elcongresoentumano.es)</Text>, licencia {ecetm.licencia}. Usamos solo:{' '}
           {ecetm.uso.toLowerCase()} No usamos sus resúmenes, impactos ni nombres populares.
@@ -44,6 +44,16 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
         </Text>
         <Enlace texto="elcongresoentumano.es" url={ecetm.url} />
         <Enlace texto={`Licencia ${ecetm.licencia}`} url={ecetm.licenciaUrl} />
+      </View>
+
+      <View style={s.caja}>
+        <Text style={s.h}>Test «Brújula»</Text>
+        <Text style={s.p}>
+          Sus 40 preguntas están adaptadas de escalas usadas en investigación revisada por pares (European Social Survey,
+          Chapel Hill Expert Survey, CIS, escala NEP, valores de crianza de Feldman y Stenner, entre otras) o siguen el
+          formato de afirmación de las aplicaciones de consejo de voto. La posición de cada grupo se calcula solo con sus
+          votos oficiales. Cada pregunta muestra su fuente y las referencias completas aparecen al final del test.
+        </Text>
       </View>
 
       <View style={s.caja}>
@@ -71,9 +81,9 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
 const s = StyleSheet.create({
   cont: { padding: 16, paddingBottom: 48, gap: 12 },
   caja: { backgroundColor: UI.superficie, borderRadius: UI.radio, padding: 14, gap: 8 },
-  aviso: { backgroundColor: '#fff6dc', borderWidth: 1, borderColor: '#f0d58a' },
+  aviso: { backgroundColor: UI.marcaSuave },
   avisoTxt: { color: UI.texto, fontSize: 14, lineHeight: 20 },
-  h: { fontSize: 13, fontWeight: '700', color: UI.texto2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  h: { fontSize: 16, fontWeight: '700', color: UI.marca2, fontFamily: SERIF },
   p: { color: UI.texto, fontSize: 14, lineHeight: 20 },
   b: { fontWeight: '700' },
   version: { color: UI.texto3, fontSize: 12, marginTop: 6 },
