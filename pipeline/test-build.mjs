@@ -13,6 +13,7 @@ test('build.mjs genera un dataset válido', async () => {
   process.env.PLENO_CACHE = path.join(dir, 'cache');
   process.env.PLENO_SALIDA = path.join(dir, 'dataset.json');
   process.env.PLENO_PAUSA_MS = '0';
+  process.env.PLENO_SIN_DIPUTADOS = '1';
   const ley = {
     id: 'pnl-x', tituloOficial: fx.data.informacion.textoExpediente, tipo: 'Proposiciones no de Ley', categoria: 'migracion',
     fecha: '2026-09-16', aprobada: false, totales: { si: 170, no: 177, abstencion: 0, ausente: 3 }, urlApp: 'https://www.elcongresoentumano.es/ley/pnl-x',
@@ -22,6 +23,7 @@ test('build.mjs genera un dataset válido', async () => {
     const u = String(url);
     const json = (b) => ({ ok: true, status: 200, json: async () => b, text: async () => JSON.stringify(b) });
     if (u.endsWith('/health')) return json({ legislatura: 'XV', version: '2026-11-12' });
+    if (u.includes('/proximas')) return json({ items: [] });
     if (u.endsWith('/categorias')) return json({ categorias: [{ id: 'migracion', label: 'Migración' }] });
     if (u.includes('/votaciones?limit=')) return json({ total: 1, items: [ley] });
     if (u.includes('/es/opendata/votaciones?')) return { ok: true, status: 200, text: async () => html };

@@ -5,7 +5,8 @@ name: Actualizar datos
 
 on:
   schedule:
-    - cron: '17 5 * * 1' # lunes 05:17 UTC
+    - cron: '17 5 * * *' # cada día a las 05:17 UTC
+    - cron: '47 20 * * 2-4' # martes a jueves por la noche (días habituales de Pleno)
   workflow_dispatch:
 
 permissions:
@@ -18,6 +19,7 @@ concurrency:
 jobs:
   datos:
     runs-on: ubuntu-latest
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,7 +33,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/data/dataset.json data/cache
+          git add docs/data data/cache
           if git diff --cached --quiet; then
             echo "Sin cambios en los datos."
           else

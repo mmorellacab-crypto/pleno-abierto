@@ -5,6 +5,7 @@ import { SERIF, UI, colorPartido } from '../estilo';
 import { DIMENSIONES, PREGUNTAS, Pregunta, REFERENCIAS } from '../test/modelo';
 import { Respuestas, calcular, dimensionMedible, etiquetaDimension, etiquetaIzqDer, valoresRespuesta } from '../test/calculo';
 import type { Dataset } from '../tipos';
+import { Compartible, TarjetaAfinidad } from '../tarjetas';
 
 export interface EstadoTest {
   fase: 'intro' | 'preguntas' | 'resultados';
@@ -162,12 +163,13 @@ function Fuente({ p, datos }: { p: Pregunta; datos: Dataset }) {
 
 function Resultados({ datos, estado, setEstado }: { datos: Dataset; estado: EstadoTest; setEstado: (e: EstadoTest) => void }) {
   const r = useMemo(() => calcular(estado.respuestas, datos), [estado.respuestas, datos]);
+  const top = r.afinidades[0];
   const grupos = Object.keys(datos.grupos);
   const eco = r.dimensiones.find((d) => d.id === 'eco')!;
   const soc = r.dimensiones.find((d) => d.id === 'soc')!;
 
   return (
-    <ScrollView contentContainerStyle={s.cont}>
+    <ScrollView key="resultados" contentContainerStyle={s.cont}>
       <View style={s.heroe}>
         <Text style={s.heroeSub}>Tu orientación estimada</Text>
         {r.izqDer != null ? (
@@ -256,6 +258,17 @@ function Resultados({ datos, estado, setEstado }: { datos: Dataset; estado: Esta
           Calculada con las {r.conLeyes} preguntas que respondiste y que están vinculadas a leyes votadas (distancia media por pregunta; Louwerse y Rosema, 2014). El Grupo Mixto reúne partidos distintos.
         </Text>
       </View>
+
+      {top && r.izqDer != null && (
+        <Compartible titulo="Mi resultado en la Brújula de Pleno Abierto">
+          <TarjetaAfinidad
+            datos={datos}
+            subtitulo={`🧭 BRÚJULA · ${etiquetaIzqDer(r.izqDer).toUpperCase()} (${r.izqDer.toFixed(1).replace('.', ',')}/10)`}
+            titular={`Coincido un ${top.pct}% con ${datos.grupos[top.grupo].corto}`}
+            afinidades={r.afinidades}
+          />
+        </Compartible>
+      )}
 
       <View style={s.caja}>
         <Titulo tam={18}>Cómo leer estos resultados</Titulo>

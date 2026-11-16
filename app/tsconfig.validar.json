@@ -7,8 +7,13 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"],
-    "outDir": ".validar"
+    "types": [
+      "node"
+    ],
+    "outDir": ".validar",
+    "jsx": "react-jsx"
   },
-  "files": ["scripts/validar-test.ts"]
+  "files": [
+    "scripts/validar-test.ts"
+  ]
 }

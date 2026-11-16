@@ -7,7 +7,7 @@ import type { Dataset, Ley, Postura } from '../tipos';
 
 const POSTURAS: Postura[] = ['si', 'no', 'abstencion', 'dividido'];
 
-export default function Leyes({ datos, abrir }: { datos: Dataset; abrir: (l: Ley) => void }) {
+export default function Leyes({ datos, abrir, verProximas }: { datos: Dataset; abrir: (l: Ley) => void; verProximas: () => void }) {
   const [f, setF] = useState<Filtros>(FILTROS_INICIALES);
   const [verFiltros, setVerFiltros] = useState(true);
   const lista = useMemo(() => filtrar(datos.leyes, f), [datos, f]);
@@ -15,8 +15,23 @@ export default function Leyes({ datos, abrir }: { datos: Dataset; abrir: (l: Ley
   const grupos = Object.entries(datos.grupos);
   const hayFiltros = f.temas.length || f.grupo || f.resultado !== 'todas' || f.texto;
 
+  const proximas = (datos.proximas ?? []).filter((p) => p.estado === 'prevista' || p.estado === 'pendiente');
   const cabecera = (
     <View style={s.cab}>
+      {proximas.length > 0 && (
+        <Pressable onPress={verProximas} style={s.aviso2} accessibilityRole="button">
+          <Text style={s.aviso2Icono}>🔔</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={s.aviso2Tit}>
+              {proximas.length} {proximas.length === 1 ? 'votación anunciada' : 'votaciones anunciadas'}
+            </Text>
+            <Text style={s.aviso2Txt} numberOfLines={1}>
+              {proximas[0].titulo}
+            </Text>
+          </View>
+          <Text style={s.aviso2Flecha}>›</Text>
+        </Pressable>
+      )}
       <View style={s.buscarCaja}>
         <Text style={s.lupa}>⌕</Text>
         <TextInput
@@ -187,6 +202,11 @@ function Tarjeta({
 
 const s = StyleSheet.create({
   lista: { padding: 14, paddingBottom: 40, gap: 14 },
+  aviso2: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: UI.marcaSuave, borderRadius: 14, padding: 12 },
+  aviso2Icono: { fontSize: 20 },
+  aviso2Tit: { fontWeight: '700', color: UI.marca },
+  aviso2Txt: { fontSize: 12, color: UI.texto2 },
+  aviso2Flecha: { fontSize: 22, color: UI.marca2 },
   cab: { gap: 8, marginBottom: 2 },
   buscarCaja: {
     flexDirection: 'row',

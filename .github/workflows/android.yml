@@ -9,7 +9,7 @@ name: Compilar Android
 on:
   push:
     branches: [main]
-    paths: ['app/**', 'docs/data/dataset.json', '.github/workflows/android.yml']
+    paths: ['app/**', '.github/workflows/android.yml']
     tags: ['v*']
   workflow_dispatch:
 
@@ -49,7 +49,9 @@ jobs:
         run: npm run validar-test
 
       - name: Copiar los datos más recientes a la app
-        run: cp docs/data/dataset.json app/assets/dataset.json
+        run: |
+          cp docs/data/dataset.json app/assets/dataset.json
+          if [ -f docs/data/diputados.json ]; then cp docs/data/diputados.json app/assets/diputados.json; fi
 
       - name: Generar proyecto Android
         working-directory: app

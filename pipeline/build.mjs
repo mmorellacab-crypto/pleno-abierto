@@ -9,6 +9,7 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { GRUPOS, emparejar, fechaCongreso, fechaIso, recuentoPorGrupo, registroLey } from './lib.mjs';
+import { construirDiputados, construirProximas } from './diputados.mjs';
 
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -152,12 +153,20 @@ export async function main() {
       },
     },
     temas: cats.categorias.map((c) => ({ id: c.id, nombre: c.label })),
+    proximas: await construirProximas({ pedir, ecetm: ECETM }),
     grupos: gruposPresentes(registros),
     leyes: registros,
   };
 
   await mkdir(path.dirname(SALIDA), { recursive: true });
   await writeFile(SALIDA, JSON.stringify(dataset));
+
+  if (process.env.PLENO_SIN_DIPUTADOS !== '1') {
+    const { diputados, totalVotaciones } = await construirDiputados({ pedir, dormir, pausa: PAUSA_MS, raiz: RAIZ, legislatura: LEGISLATURA, leyes: registros });
+    const salidaDip = path.join(path.dirname(SALIDA), 'diputados.json');
+    await writeFile(salidaDip, JSON.stringify({ version: 1, generado: dataset.generado, legislatura: LEGISLATURA, diasConVotaciones: totalVotaciones, leyes: registros.map((r) => r.id), diputados }));
+    console.log(`Guardado ${path.relative(RAIZ, salidaDip)}: ${diputados.length} diputados.`);
+  }
   const conOficial = registros.filter((r) => r.fuenteVotos === 'congreso').length;
   console.log(`\nGuardado ${path.relative(RAIZ, SALIDA)}: ${registros.length} leyes, ${conOficial} con voto oficial.`);
   if (sinOficial.length) console.log(`Sin votación oficial emparejada (${sinOficial.length}):\n  ${sinOficial.join('\n  ')}`);

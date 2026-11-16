@@ -5,6 +5,8 @@ import * as path from 'node:path';
 import { DIMENSIONES, PREGUNTAS, REFERENCIAS } from '../src/test/modelo';
 import { afinidad, calcular, posicionGrupo } from '../src/test/calculo';
 import type { Dataset } from '../src/tipos';
+import { LEYES_VOTA } from '../src/vota/leyes';
+import { afinidadVotos, coincide } from '../src/vota/calculo';
 
 const datos: Dataset = JSON.parse(readFileSync(path.join(__dirname, '../../assets/dataset.json'), 'utf8'));
 
@@ -55,4 +57,19 @@ console.log('\nPosición de cada grupo por dimensión (solo votos en leyes vincu
 for (const d of res.dimensiones) {
   console.log(`  ${d.id}: ` + Object.entries(d.grupos).map(([g, v]) => `${datos.grupos[g].corto} ${v == null ? '—' : v.toFixed(2)}`).join(' · '));
 }
+// «Vota tú también»: todas las leyes existen, tienen voto por grupo y resumen.
+assert.equal(new Set(LEYES_VOTA.map((l) => l.id)).size, LEYES_VOTA.length);
+for (const l of LEYES_VOTA) {
+  const ley = datos.leyes.find((x) => x.id === l.id);
+  assert.ok(ley && ley.grupos, `Vota: ley sin datos ${l.id}`);
+  assert.ok(l.resumen.length > 20 && l.puntos.length >= 2 && l.eli.startsWith('https://www.boe.es/eli/'), `Vota: resumen incompleto ${l.id}`);
+}
+assert.equal(coincide('si', 'si'), 1);
+assert.equal(coincide('si', 'no'), 0);
+assert.equal(coincide('abstencion', 'no'), 0.5);
+assert.equal(coincide('no', 'dividido'), 0.5);
+const votosPP = Object.fromEntries(LEYES_VOTA.map((l) => [l.id, datos.leyes.find((x) => x.id === l.id)!.grupos!.GP.postura as 'si' | 'no' | 'abstencion']));
+assert.equal(afinidadVotos(votosPP, datos)[0].pct, 100);
+console.log(`Vota tú también: ${LEYES_VOTA.length} leyes con resumen.`);
+
 console.log('\nOK: banco de 40 preguntas y cálculo coherentes.');

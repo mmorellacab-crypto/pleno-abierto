@@ -14,7 +14,10 @@ App Android **libre y gratuita** para ver, con filtros y colores, **qué votó c
 |---|---|
 | **Leyes** | Lista con filtros combinables: tema, partido, qué votó ese partido (Sí / No / Abstención / Dividido), resultado y búsqueda. Cada tarjeta muestra el resultado, una barra de votos y la postura de todos los grupos. |
 | **Detalle** | Título oficial, resultado, voto de cada grupo con su barra y enlaces a la votación oficial y a la ficha de El Congreso en tu mano. |
-| **Partidos** | Cómo votó cada grupo en cada tema y con qué otros grupos coincide más. |
+| **Partidos** (en «Más») | Cómo votó cada grupo en cada tema y con qué otros grupos coincide más. |
+| **Vota tú también** | 20 leyes reales con resumen neutral (a partir del BOE): votas, ves el resultado real y tu coincidencia con cada grupo; tarjeta para compartir. |
+| **Mis diputados** | Diputados de tu provincia, su participación en las votaciones y su voto en cada ley. |
+| **Avisos** | Próximas votaciones anunciadas y notificaciones locales con el resultado. |
 | **Brújula** | Test de 40 preguntas basadas en escalas académicas; muestra tu perfil en 6 dimensiones, un mapa y tu coincidencia con cada grupo según sus votos reales. |
 | **Fuentes** | Atribuciones, licencias, aviso de no afiliación, privacidad y fecha de los datos. |
 

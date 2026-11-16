@@ -1,68 +1,107 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
-import { datosActualizados, datosIncluidos } from './src/datos';
+import { alAbrirAviso } from './src/avisos';
+import { datosActualizados, datosIncluidos, diputadosActualizados, diputadosLocales } from './src/datos';
 import { SERIF, UI } from './src/estilo';
 import { APP } from './src/app-info';
 import Detalle from './src/pantallas/Detalle';
+import Diputados from './src/pantallas/Diputados';
 import Fuentes from './src/pantallas/Fuentes';
 import Leyes from './src/pantallas/Leyes';
+import { Avisos, MenuMas, Promesas, SubMas } from './src/pantallas/Mas';
 import Partidos from './src/pantallas/Partidos';
 import Test, { EstadoTest, TEST_INICIAL } from './src/pantallas/Test';
-import type { Dataset, Ley } from './src/tipos';
+import VotaTu, { EstadoVota, VOTA_INICIAL } from './src/pantallas/VotaTu';
+import type { Dataset, DatosDiputados, Ley } from './src/tipos';
 
-type Pestaña = 'leyes' | 'partidos' | 'test' | 'fuentes';
+type Pestaña = 'leyes' | 'vota' | 'test' | 'diputados' | 'mas';
 const PESTAÑAS: { id: Pestaña; texto: string; icono: string }[] = [
   { id: 'leyes', texto: 'Leyes', icono: '📜' },
-  { id: 'partidos', texto: 'Partidos', icono: '🏛️' },
+  { id: 'vota', texto: 'Vota', icono: '🗳️' },
   { id: 'test', texto: 'Brújula', icono: '🧭' },
-  { id: 'fuentes', texto: 'Fuentes', icono: 'ℹ️' },
+  { id: 'diputados', texto: 'Diputados', icono: '👤' },
+  { id: 'mas', texto: 'Más', icono: '☰' },
 ];
 const SUBTITULO: Record<Pestaña, string> = {
   leyes: 'Qué votó cada partido, ley a ley',
-  partidos: 'Cómo vota cada grupo parlamentario',
+  vota: 'Vota tú también',
   test: 'Test de orientación política',
-  fuentes: 'Datos, licencias y privacidad',
+  diputados: 'Quién representa a tu provincia',
+  mas: 'Partidos, avisos, promesas y fuentes',
+};
+const SUB_MAS: Record<SubMas, string> = {
+  menu: 'Más',
+  partidos: 'Partidos',
+  avisos: 'Próximas votaciones y avisos',
+  promesas: 'Promesas vs hechos',
+  fuentes: 'Fuentes, licencias y privacidad',
 };
 
 export default function App() {
   const [datos, setDatos] = useState<Dataset>(datosIncluidos);
+  const [dip, setDip] = useState<DatosDiputados>(diputadosLocales);
   const [pestaña, setPestaña] = useState<Pestaña>('leyes');
+  const [mas, setMas] = useState<SubMas>('menu');
   const [abierta, setAbierta] = useState<Ley | null>(null);
   const [test, setTest] = useState<EstadoTest>(TEST_INICIAL);
+  const [vota, setVota] = useState<EstadoVota>(VOTA_INICIAL);
 
   useEffect(() => {
     datosActualizados(datos).then((d) => d && setDatos(d));
+    diputadosActualizados(dip).then((d) => d && setDip(d));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Al tocar una notificación de resultado, abrir la ficha de esa ley (con su tarjeta para compartir).
+  useEffect(
+    () =>
+      alAbrirAviso((id) => {
+        if (id) {
+          const ley = datos.leyes.find((l) => l.id === id);
+          if (ley) setAbierta(ley);
+        } else {
+          setPestaña('mas');
+          setMas('avisos');
+        }
+      }),
+    [datos],
+  );
 
   useEffect(() => {
     if (Platform.OS !== 'android') return;
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (abierta) {
-        setAbierta(null);
-        return true;
-      }
-      if (pestaña === 'test' && test.fase === 'preguntas') {
-        setTest(test.indice > 0 ? { ...test, indice: test.indice - 1 } : TEST_INICIAL);
-        return true;
-      }
-      if (pestaña !== 'leyes') {
-        setPestaña('leyes');
-        return true;
-      }
+      if (abierta) return setAbierta(null), true;
+      if (pestaña === 'test' && test.fase === 'preguntas') return setTest(test.indice > 0 ? { ...test, indice: test.indice - 1 } : TEST_INICIAL), true;
+      if (pestaña === 'mas' && mas !== 'menu') return setMas('menu'), true;
+      if (pestaña !== 'leyes') return setPestaña('leyes'), true;
       return false;
     });
     return () => sub.remove();
-  }, [abierta, pestaña, test]);
+  }, [abierta, pestaña, test, mas]);
+
+  const enSub = pestaña === 'mas' && mas !== 'menu';
+  const volver = abierta ? () => setAbierta(null) : enSub ? () => setMas('menu') : null;
+
+  let cuerpo: React.ReactNode;
+  if (abierta) cuerpo = <Detalle ley={abierta} datos={datos} />;
+  else if (pestaña === 'leyes') cuerpo = <Leyes datos={datos} abrir={setAbierta} verProximas={() => (setPestaña('mas'), setMas('avisos'))} />;
+  else if (pestaña === 'vota') cuerpo = <VotaTu datos={datos} estado={vota} setEstado={setVota} />;
+  else if (pestaña === 'test') cuerpo = <Test datos={datos} estado={test} setEstado={setTest} />;
+  else if (pestaña === 'diputados') cuerpo = <Diputados datos={datos} dip={dip} />;
+  else if (mas === 'partidos') cuerpo = <Partidos datos={datos} />;
+  else if (mas === 'avisos') cuerpo = <Avisos datos={datos} />;
+  else if (mas === 'promesas') cuerpo = <Promesas />;
+  else if (mas === 'fuentes') cuerpo = <Fuentes datos={datos} />;
+  else cuerpo = <MenuMas ir={setMas} />;
 
   return (
     <View style={s.raiz}>
       <StatusBar style="light" />
       <View style={s.barraSup}>
-        {abierta ? (
-          <Pressable onPress={() => setAbierta(null)} accessibilityRole="button" accessibilityLabel="Volver" style={s.volver}>
-            <Text style={s.volverTxt}>‹ Volver</Text>
+        {volver ? (
+          <Pressable onPress={volver} accessibilityRole="button" accessibilityLabel="Volver" style={s.volver}>
+            <Text style={s.volverTxt}>‹ {abierta ? 'Volver' : SUB_MAS[mas]}</Text>
           </Pressable>
         ) : (
           <View>
@@ -72,19 +111,7 @@ export default function App() {
         )}
       </View>
 
-      <View style={s.cuerpo}>
-        {abierta ? (
-          <Detalle ley={abierta} datos={datos} />
-        ) : pestaña === 'leyes' ? (
-          <Leyes datos={datos} abrir={setAbierta} />
-        ) : pestaña === 'partidos' ? (
-          <Partidos datos={datos} />
-        ) : pestaña === 'test' ? (
-          <Test datos={datos} estado={test} setEstado={setTest} />
-        ) : (
-          <Fuentes datos={datos} />
-        )}
-      </View>
+      <View style={s.cuerpo}>{cuerpo}</View>
 
       {!abierta && (
         <View style={s.tabs} accessibilityRole="tablist">
@@ -93,7 +120,10 @@ export default function App() {
             return (
               <Pressable
                 key={p.id}
-                onPress={() => setPestaña(p.id)}
+                onPress={() => {
+                  setPestaña(p.id);
+                  if (p.id === 'mas') setMas('menu');
+                }}
                 style={s.tab}
                 accessibilityRole="tab"
                 accessibilityState={{ selected: on }}
@@ -137,10 +167,10 @@ const s = StyleSheet.create({
     paddingTop: 6,
   },
   tab: { flex: 1, alignItems: 'center', paddingVertical: 2 },
-  tabIconoCaja: { paddingHorizontal: 16, paddingVertical: 3, borderRadius: 14 },
+  tabIconoCaja: { paddingHorizontal: 12, paddingVertical: 3, borderRadius: 14 },
   tabIconoCajaOn: { backgroundColor: UI.marcaSuave },
-  tabIcono: { fontSize: 19 },
+  tabIcono: { fontSize: 18 },
   apagado: { opacity: 0.5 },
-  tabTxt: { fontSize: 12, color: UI.texto3, marginTop: 2 },
+  tabTxt: { fontSize: 11, color: UI.texto3, marginTop: 2 },
   tabTxtOn: { color: UI.marca, fontWeight: '700' },
 });

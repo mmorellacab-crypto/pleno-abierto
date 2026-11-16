@@ -3,6 +3,7 @@ import { Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { BarraVotos, ChipTema, Cifras, Etiqueta, MarcaPartido, Resultado, Titulo } from '../componentes';
 import { SERIF, UI, fechaCorta } from '../estilo';
 import type { Dataset, Ley } from '../tipos';
+import { Compartible, TarjetaLey } from '../tarjetas';
 
 export default function Detalle({ ley, datos }: { ley: Ley; datos: Dataset }) {
   const tema = datos.temas.find((t) => t.id === ley.tema);
@@ -63,6 +64,11 @@ export default function Detalle({ ley, datos }: { ley: Ley; datos: Dataset }) {
           reunió al menos el 75 % de los votos emitidos del grupo. El Grupo Mixto reúne partidos distintos.
         </Text>
       </View>
+
+      <Text style={s.h}>Tarjeta para compartir</Text>
+      <Compartible titulo="Resultado de la votación en el Congreso">
+        <TarjetaLey ley={ley} datos={datos} />
+      </Compartible>
 
       <View style={s.caja}>
         <Text style={s.h}>Fuentes</Text>

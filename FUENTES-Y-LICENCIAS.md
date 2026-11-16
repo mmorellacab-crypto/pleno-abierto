@@ -29,6 +29,7 @@ Cita usada: «Origen de los datos: Congreso de los Diputados — Datos abiertos�
   1. **La selección de leyes y decretos** que siguen (identificador, fecha y enlace a su ficha).
   2. **El tema** asignado a cada ley (vivienda, trabajo, impuestos…), generado con IA.
   3. Sus totales, **solo para localizar** la votación oficial correspondiente, y **solo se muestran** cuando el Congreso no publica voto nominal (votaciones de la Diputación Permanente), indicándolo.
+- Agenda de próximas votaciones (fecha, título oficial, estado y enlace a la nota del Congreso).
 - Lo que no usamos: resúmenes, «qué propone», impactos, nombres populares, patrimonio, test, fotos.
 - Cambios realizados (requisito CC BY): hemos vinculado cada ley con su votación oficial del Congreso y recalculado el resultado y el voto por grupo a partir de los datos oficiales.
 - Aviso: los temas están generados con IA, son orientativos y pueden contener errores.
@@ -41,10 +42,17 @@ Cita usada: «Origen de los datos: Congreso de los Diputados — Datos abiertos�
 - Salvaguardas: ítems con redacción equilibrada (a favor y en contra) para limitar la aquiescencia (Krosnick, 1999); los grupos solo se sitúan en dimensiones con al menos dos leyes distintas; se advierte de la dinámica gobierno–oposición (Hix y Noury, 2016); no es una recomendación de voto y las respuestas no salen del dispositivo.
 - `npm run validar-test` (en `app/`) comprueba el banco de preguntas y el cálculo en cada compilación.
 
-## 4. No afiliación
+## 4. Otras secciones
+
+- **Vota tú también**: 20 leyes con resúmenes propios redactados con IA (Claude) a partir del articulado oficial del BOE, revisados contra el texto y marcados como tales en la app, con enlace al BOE. Las disposiciones legales no son objeto de propiedad intelectual (art. 13 del texto refundido de la Ley de Propiedad Intelectual).
+- **Mis diputados**: lista oficial de diputados (datos abiertos del Congreso: en activo y de baja) y su participación calculada con el voto nominal oficial de todas las votaciones del Pleno de la legislatura. «Participación» es el porcentaje de votaciones en que votó sí, no o abstención mientras era diputado.
+- **Próximas votaciones**: agenda de El Congreso en tu mano (fecha, título oficial y enlace a la nota oficial del Congreso) y el índice oficial de artículos del BOE para los decretos-ley.
+- **Promesas vs hechos**: en preparación; se publicará solo cuando estén revisados con el mismo criterio los programas de todos los partidos, cada promesa con cita y página.
+
+## 5. No afiliación
 
 Pleno Abierto es independiente: no representa al Congreso de los Diputados, a ninguna administración pública ni a ningún partido político, y no está afiliada a El Congreso en tu mano. Este aviso aparece en la app, en la web y debe figurar en la ficha de Google Play (política de Google sobre apps que comunican información gubernamental).
 
-## 5. Gratuidad
+## 6. Gratuidad
 
 La app es y será gratuita: sin anuncios, sin compras dentro de la app, sin suscripciones y sin recogida de datos. La licencia GPL-3.0 garantiza que el código siga siendo libre.

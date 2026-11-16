@@ -3,7 +3,7 @@
 Componentes de software libre incluidos en la app Pleno Abierto (dependencias de producción).
 Generado automáticamente con `scripts/licencias-terceros.mjs`.
 
-Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), Unlicense (2), CC-BY-4.0 (1), (MIT OR Apache-2.0) (1), BlueOak-1.0.0 (3), 0BSD (1), MPL-2.0 (3), (BSD-3-Clause OR GPL-2.0) (1), BSD-2-Clause (3), (MIT OR CC0-1.0) (2).
+Resumen: MIT (414), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), Unlicense (2), CC-BY-4.0 (1), (MIT OR Apache-2.0) (1), BlueOak-1.0.0 (3), 0BSD (1), MPL-2.0 (3), (BSD-3-Clause OR GPL-2.0) (1), BSD-2-Clause (3), (MIT OR CC0-1.0) (2).
 
 | Paquete | Versión | Licencia |
 |---|---|---|
@@ -119,6 +119,7 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | @noxcturnal/noxcturnal-linux-x64-gnu | 0.1.14 | MIT |
 | @noxcturnal/noxcturnal-linux-x64-musl | 0.1.14 | MIT |
 | @oxc-project/types | 0.154.0 | MIT |
+| @react-native-async-storage/async-storage | 2.2.0 | MIT |
 | @react-native/asset-utils | 0.88.1 | MIT |
 | @react-native/babel-plugin-codegen | 0.88.1 | MIT |
 | @react-native/codegen | 0.88.1 | MIT |
@@ -143,6 +144,7 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | @xmldom/xmldom | 0.8.15 | MIT |
 | @xmldom/xmldom | 0.9.12 | MIT |
 | 2g | 1.0.1 | MIT |
+| abort-controller | 3.0.0 | MIT |
 | accepts | 1.3.8 | MIT |
 | accepts | 2.0.0 | MIT |
 | acorn | 8.19.0 | MIT |
@@ -166,6 +168,7 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | babel-plugin-syntax-hermes-parser | 0.36.1 | MIT |
 | babel-plugin-transform-flow-enums | 0.0.2 | MIT |
 | babel-preset-expo | 58.0.25 | MIT |
+| badgin | 1.2.3 | MIT |
 | balanced-match | 4.0.4 | MIT |
 | base64-js | 1.5.1 | MIT |
 | baseline-browser-mapping | 2.11.37 | Apache-2.0 |
@@ -224,8 +227,11 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | escape-html | 1.0.3 | MIT |
 | escape-string-regexp | 1.0.5 | MIT |
 | etag | 1.8.1 | MIT |
+| event-target-shim | 5.0.1 | MIT |
 | expo | 58.0.25 | MIT |
+| expo-application | 58.1.2 | MIT |
 | expo-asset | 58.0.21 | MIT |
+| expo-background-task | 58.0.13 | MIT |
 | expo-constants | 58.0.16 | MIT |
 | expo-file-system | 58.0.13 | MIT |
 | expo-font | 58.0.12 | MIT |
@@ -235,8 +241,11 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | expo-modules-core | 58.1.0 | MIT |
 | expo-modules-jsi | 58.0.23 | MIT |
 | expo-modules-macros | 0.33.0 | MIT |
+| expo-notifications | 58.1.9 | MIT |
 | expo-server | 58.1.0 | MIT |
+| expo-sharing | 58.0.23 | MIT |
 | expo-status-bar | 58.0.5 | MIT |
+| expo-task-manager | 58.0.14 | MIT |
 | exponential-backoff | 3.1.3 | Apache-2.0 |
 | fb-dotslash | 0.5.8 | (MIT OR Apache-2.0) |
 | fb-watchman | 2.0.4 | MIT |
@@ -274,6 +283,7 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | is-docker | 2.2.1 | MIT |
 | is-fullwidth-code-point | 3.0.0 | MIT |
 | is-number | 7.0.0 | MIT |
+| is-plain-obj | 2.1.0 | MIT |
 | is-wsl | 2.2.0 | MIT |
 | isexe | 2.0.0 | ISC |
 | jest-get-type | 29.6.3 | MIT |
@@ -301,6 +311,7 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | makeerror | 1.0.12 | BSD-3-Clause |
 | memoize-one | 6.0.0 | MIT |
 | memoize-one | 5.2.1 | MIT |
+| merge-options | 3.0.4 | MIT |
 | merge-stream | 2.0.0 | MIT |
 | metro | 0.87.1 | MIT |
 | metro-babel-transformer | 0.87.1 | MIT |
@@ -369,6 +380,7 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | react-dom | 19.3.0 | MIT |
 | react-is | 18.3.1 | MIT |
 | react-native | 0.88.1 | MIT |
+| react-native-view-shot | 6.1.1 | MIT |
 | react-native-web | 0.21.4 | MIT |
 | react-refresh | 0.14.2 | MIT |
 | regenerate | 1.5.0 | MIT |
@@ -437,6 +449,7 @@ Resumen: MIT (401), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | unicode-match-property-ecmascript | 2.0.0 | MIT |
 | unicode-match-property-value-ecmascript | 2.2.1 | MIT |
 | unicode-property-aliases-ecmascript | 2.2.0 | MIT |
+| unimodules-app-loader | 58.0.2 | MIT |
 | unpipe | 1.0.0 | MIT |
 | update-browserslist-db | 1.4.0 | MIT |
 | utils-merge | 1.0.1 | MIT |
@@ -3432,6 +3445,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+### @react-native-async-storage/async-storage@2.2.0
+
+```
+MIT License
+
+Copyright (c) 2015-present, Facebook, Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ### @sinclair/typebox@0.27.12
 
 ```
@@ -3695,6 +3734,32 @@ MIT License
 
 Copyright (c) Phil Pluckthun,
 Copyright (c) 650 Industries, Inc. (aka Expo),
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### abort-controller@3.0.0
+
+```
+MIT License
+
+Copyright (c) 2017 Toru Nagashima
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -6535,6 +6600,32 @@ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
+### event-target-shim@5.0.1
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015 Toru Nagashima
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ### expo@58.0.25
 
 ```
@@ -6561,7 +6652,59 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+### expo-application@58.1.2
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ### expo-asset@58.0.21
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### expo-background-task@58.0.13
 
 ```
 The MIT License (MIT)
@@ -6821,6 +6964,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+### expo-notifications@58.1.9
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ### expo-server@58.1.0
 
 ```
@@ -6847,7 +7016,59 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+### expo-sharing@58.0.23
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ### expo-status-bar@58.0.5
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### expo-task-manager@58.0.14
 
 ```
 The MIT License (MIT)
@@ -7774,6 +7995,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+```
+
+### is-plain-obj@2.1.0
+
+```
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
 ### is-wsl@2.2.0
@@ -9481,6 +9716,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+### merge-options@3.0.4
+
+```
+The MIT License (MIT)
+
+Copyright (c) Michael Mayer <michael@schnittstabil.de>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ### merge-stream@2.0.0
 
 ```
@@ -11111,6 +11372,32 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
+### react-native-view-shot@6.1.1
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2016 Gaëtan Renaudeau
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
 ### react-native-web@0.21.4
 
 ```
@@ -12499,6 +12786,32 @@ SOFTWARE.
 MIT License
 
 Copyright (c) Matteo Collina and Undici contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### unimodules-app-loader@58.0.2
+
+```
+The MIT License (MIT)
+
+Copyright (c) 2015-present 650 Industries, Inc. (aka Expo)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
