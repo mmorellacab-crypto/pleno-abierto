@@ -130,7 +130,7 @@ export async function construirProximas({ pedir, ecetm }) {
           const xml = await pedir(`https://www.boe.es/diario_boe/xml.php?id=${id}`, 'html');
           articulos = [...xml.matchAll(/<p class="articulo">([^<]+)<\/p>/g)]
             .map((m) => m[1].trim())
-            .filter((t) => !/título competencial|entrada en vigor|habilitación|desarrollo reglamentario|salvaguarda/i.test(t))
+            .filter((t) => !t.startsWith('«') && !/título competencial|entrada en vigor|habilitación|desarrollo reglamentario|salvaguarda/i.test(t))
             .slice(0, 12);
         }
       } catch {

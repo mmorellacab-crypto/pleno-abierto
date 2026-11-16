@@ -82,10 +82,10 @@ export function Avisos({ datos }: { datos: Dataset }) {
             <Text style={[s.estado, p.estado === 'publicada' && { backgroundColor: '#E3F6E5', color: '#11692A' }]}>{ESTADO[p.estado] ?? p.estado}</Text>
           </View>
           <Text style={s.tituloProx}>{p.titulo}</Text>
-          {p.articulos.length > 0 && (
+          {p.articulos.filter((a) => !a.startsWith('«')).length > 0 && (
             <View style={{ gap: 3 }}>
               <Text style={s.sub}>Qué contiene (índice oficial del BOE)</Text>
-              {p.articulos.map((a) => (
+              {p.articulos.filter((a) => !a.startsWith('«')).map((a) => (
                 <Text key={a} style={s.art}>
                   · {a}
                 </Text>

@@ -100,7 +100,7 @@ function FilaDiputado({ d, datos, onPress }: { d: Diputado; datos: Dataset; onPr
         <Text style={s.nombre}>{nombreLegible(d.nombre)}</Text>
         <Text style={s.meta}>
           {d.formacion}
-          {d.grupo ? ` · ${datos.grupos[d.grupo]?.corto ?? d.grupo}` : ''}
+          {d.grupo && !d.formacion.toLowerCase().includes((datos.grupos[d.grupo]?.corto ?? d.grupo).toLowerCase()) ? ` · ${datos.grupos[d.grupo]?.corto ?? d.grupo}` : ''}
           {d.baja && !d.baja.endsWith('2026') ? ` · baja el ${d.baja}` : ''}
         </Text>
         <View style={s.partRow}>
@@ -139,7 +139,7 @@ function Ficha({ d, datos, dip, volver }: { d: Diputado; datos: Dataset; dip: Da
       </View>
       <View style={s.datos}>
         <Dato valor={`${pct}%`} etiqueta="Participación en votaciones" />
-        <Dato valor={`${d.votadas}/${d.total}`} etiqueta="Votaciones en las que votó" />
+        <Dato valor={d.votadas.toLocaleString('es-ES')} etiqueta={`de ${d.total.toLocaleString('es-ES')} votaciones en las que votó`} />
         {conGrupo.length > 0 && <Dato valor={`${Math.round((100 * igual) / conGrupo.length)}%`} etiqueta="Votó como su grupo" />}
       </View>
       <View style={s.caja}>
