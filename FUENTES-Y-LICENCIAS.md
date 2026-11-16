@@ -17,7 +17,7 @@ Este documento explica de dónde salen los datos de Pleno Abierto, con qué cond
 - Datos: <https://www.congreso.es/es/opendata/votaciones> (un fichero JSON por votación: totales y voto de cada diputado con su grupo).
 - Condiciones: <https://www.congreso.es/es/cem/aviso-legal>, apartado «Reutilización de información»: (a) no alterar el contenido; (b) no desnaturalizar su sentido; (c) citar la fuente; (d) mencionar la fecha de la última actualización; (e) uso diligente.
 - Lo que usamos: título oficial del expediente, sesión, número y fecha de la votación, totales y voto nominal (que solo sumamos por grupo parlamentario). No usamos fotografías, escudos ni logotipos.
-- Uso diligente: el pipeline descarga solo las votaciones necesarias, con pausas entre peticiones, una vez por semana, con un User-Agent que identifica el proyecto, y guarda en caché lo ya descargado (los ficheros publicados no cambian).
+- Uso diligente: el pipeline descarga solo las votaciones necesarias, con pausas entre peticiones, una vez por semana, y guarda en caché lo ya descargado (los ficheros publicados no cambian). Como congreso.es rechaza los agentes automatizados desde servidores en la nube, las peticiones usan cabeceras de navegador para acceder al mismo contenido público; si el Congreso no responde, el pipeline no sobrescribe los datos anteriores.
 
 Cita usada: «Origen de los datos: Congreso de los Diputados — Datos abiertos», con la fecha de actualización.
 

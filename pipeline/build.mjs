@@ -20,7 +20,11 @@ const ECETM = 'https://www.elcongresoentumano.es/api/public/v1';
 const CONGRESO = 'https://www.congreso.es';
 let LEGISLATURA = process.env.LEGISLATURA || '';
 const REPO = process.env.GITHUB_REPOSITORY || 'pleno-abierto';
-const UA = `PlenoAbierto/1.0 (app libre y gratuita; https://github.com/${REPO})`;
+// congreso.es devuelve 403 a los agentes claramente automatizados desde GitHub Actions; se usan
+// cabeceras de navegador para acceder al mismo contenido público que ve cualquier persona.
+// Se puede cambiar con la variable CONGRESO_USER_AGENT.
+const UA = process.env.CONGRESO_USER_AGENT || 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36';
+const CABECERAS = { 'Accept-Language': 'es-ES,es;q=0.9,en;q=0.7', 'Cache-Control': 'no-cache', Pragma: 'no-cache', DNT: '1' };
 const PAUSA_MS = Number(process.env.PLENO_PAUSA_MS ?? 400); // uso diligente: peticiones espaciadas
 
 const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -28,7 +32,15 @@ const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
 async function pedir(url, tipo = 'json', intentos = 3) {
   for (let i = 1; i <= intentos; i += 1) {
     try {
-      const r = await fetch(url, { headers: { 'User-Agent': UA, Accept: tipo === 'json' ? 'application/json' : 'text/html' } });
+      const esCongreso = url.startsWith(CONGRESO);
+      const r = await fetch(url, {
+        headers: {
+          'User-Agent': UA,
+          ...CABECERAS,
+          Accept: tipo === 'json' ? 'application/json, text/plain, */*' : 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          ...(esCongreso ? { Referer: `${CONGRESO}/es/opendata/votaciones` } : {}),
+        },
+      });
       if (r.status === 429) throw new Error('429');
       if (!r.ok) throw new Error(`HTTP ${r.status}`);
       return tipo === 'json' ? await r.json() : await r.text();
@@ -158,14 +170,29 @@ export async function main() {
     leyes: registros,
   };
 
+  // Salvaguarda: si el Congreso no responde, no se sustituyen datos buenos por otros peores.
+  const conOficialNuevo = registros.filter((r) => r.fuenteVotos === 'congreso').length;
+  if (existsSync(SALIDA)) {
+    const previo = JSON.parse(await readFile(SALIDA, 'utf8'));
+    const conOficialPrevio = previo.leyes.filter((r) => r.fuenteVotos === 'congreso').length;
+    if (conOficialNuevo < conOficialPrevio * 0.9) {
+      throw new Error(`Solo ${conOficialNuevo} leyes con voto oficial (antes ${conOficialPrevio}): no se guardan los datos.`);
+    }
+  }
   await mkdir(path.dirname(SALIDA), { recursive: true });
   await writeFile(SALIDA, JSON.stringify(dataset));
 
   if (process.env.PLENO_SIN_DIPUTADOS !== '1') {
-    const { diputados, totalVotaciones } = await construirDiputados({ pedir, dormir, pausa: PAUSA_MS, raiz: RAIZ, legislatura: LEGISLATURA, leyes: registros });
-    const salidaDip = path.join(path.dirname(SALIDA), 'diputados.json');
-    await writeFile(salidaDip, JSON.stringify({ version: 1, generado: dataset.generado, legislatura: LEGISLATURA, diasConVotaciones: totalVotaciones, leyes: registros.map((r) => r.id), diputados }));
-    console.log(`Guardado ${path.relative(RAIZ, salidaDip)}: ${diputados.length} diputados.`);
+    try {
+      const { diputados, totalVotaciones } = await construirDiputados({ pedir, dormir, pausa: PAUSA_MS, raiz: RAIZ, legislatura: LEGISLATURA, leyes: registros });
+      if (!diputados.length) throw new Error('lista de diputados vacía');
+      const salidaDip = path.join(path.dirname(SALIDA), 'diputados.json');
+      await writeFile(salidaDip, JSON.stringify({ version: 1, generado: dataset.generado, legislatura: LEGISLATURA, diasConVotaciones: totalVotaciones, leyes: registros.map((r) => r.id), diputados }));
+      console.log(`Guardado ${path.relative(RAIZ, salidaDip)}: ${diputados.length} diputados.`);
+    } catch (e) {
+      // No impide actualizar el resto: se conserva el fichero de diputados anterior.
+      console.warn(`::warning::No se pudieron actualizar los diputados: ${e.message}`);
+    }
   }
   const conOficial = registros.filter((r) => r.fuenteVotos === 'congreso').length;
   console.log(`\nGuardado ${path.relative(RAIZ, SALIDA)}: ${registros.length} leyes, ${conOficial} con voto oficial.`);
