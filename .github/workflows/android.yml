@@ -1,0 +1,95 @@
+# Compila la app Android en la nube de GitHub (gratis para repositorios públicos).
+# - Al subir cambios a main: genera un APK de prueba que puedes descargar desde la pestaña Actions.
+# - Al crear una etiqueta v1.0.0, v1.0.1…: publica el APK y el AAB (para Google Play) en Releases.
+# Firma: si existen los secretos ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD y ANDROID_KEY_ALIAS
+# se firma con tu clave; si no, el APK queda firmado con una clave de depuración (válido para probar,
+# no para Google Play).
+name: Compilar Android
+
+on:
+  push:
+    branches: [main]
+    paths: ['app/**', 'docs/data/dataset.json', '.github/workflows/android.yml']
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      EXPO_NO_TELEMETRY: '1'
+      EXPO_PUBLIC_REPO_URL: https://github.com/${{ github.repository }}
+      EXPO_PUBLIC_PAGES_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+      EXPO_PUBLIC_DATA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data/dataset.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Instalar dependencias
+        working-directory: app
+        run: npm ci
+
+      - name: Comprobar tipos
+        working-directory: app
+        run: npx tsc --noEmit
+
+      - name: Copiar los datos más recientes a la app
+        run: cp docs/data/dataset.json app/assets/dataset.json
+
+      - name: Generar proyecto Android
+        working-directory: app
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Compilar APK y AAB
+        working-directory: app/android
+        run: ./gradlew --no-daemon assembleRelease bundleRelease
+
+      - name: Firmar con tu clave (si está configurada)
+        env:
+          KS_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KS_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          mkdir -p salida
+          APK=app/android/app/build/outputs/apk/release/app-release.apk
+          AAB=app/android/app/build/outputs/bundle/release/app-release.aab
+          if [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > clave.jks
+            BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+            "$BT/zipalign" -f 4 "$APK" salida/alineado.apk
+            "$BT/apksigner" sign --ks clave.jks --ks-pass env:KS_PASS --ks-key-alias "$KS_ALIAS" --out salida/pleno-abierto.apk salida/alineado.apk
+            rm salida/alineado.apk
+            cp "$AAB" salida/pleno-abierto.aab
+            jarsigner -keystore clave.jks -storepass "$KS_PASS" salida/pleno-abierto.aab "$KS_ALIAS"
+            rm clave.jks
+          else
+            echo "::warning::Sin clave de firma: APK firmado con clave de depuración (solo para pruebas)."
+            cp "$APK" salida/pleno-abierto-prueba.apk
+          fi
+          ls -la salida
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pleno-abierto-android
+          path: salida/
+          retention-days: 30
+
+      - name: Publicar versión
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: salida/*
+          body: |
+            App Android de Pleno Abierto. Descarga el fichero .apk en tu móvil para instalarla.
+            Datos: Congreso de los Diputados (datos abiertos) y El Congreso en tu mano (CC BY 4.0).

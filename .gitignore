@@ -1,0 +1,12 @@
+node_modules/
+app/node_modules/
+app/.expo/
+app/dist/
+app/android/
+app/ios/
+*.jks
+*.keystore
+*.apk
+*.aab
+.DS_Store
+Thumbs.db

@@ -1,0 +1,11 @@
+{
+  "name": "pleno-abierto",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "type": "module",
+  "scripts": {
+    "datos": "node pipeline/build.mjs",
+    "test": "node --test pipeline/test.mjs pipeline/test-build.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
