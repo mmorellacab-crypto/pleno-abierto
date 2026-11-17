@@ -1,0 +1,141 @@
+# Compila la app para iPhone en los Mac de GitHub (gratis en repositorios públicos).
+# - Siempre: compila para el simulador, abre la app, comprueba que no se cierra y guarda capturas.
+# - Si existen los secretos de App Store Connect y lo pides (manual o etiqueta v*): firma y sube a App Store Connect.
+name: Compilar iPhone
+
+on:
+  push:
+    branches: [main]
+    paths: ['app/**', '.github/workflows/ios.yml', '.github/scripts/probar-ios.sh']
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      subir:
+        description: "Firmar y subir a App Store Connect"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  EXPO_NO_TELEMETRY: '1'
+  EXPO_PUBLIC_REPO_URL: https://github.com/${{ github.repository }}
+  EXPO_PUBLIC_PAGES_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+  EXPO_PUBLIC_DATA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/data/dataset.json
+
+jobs:
+  simulador:
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Elegir la versión más reciente de Xcode
+        run: |
+          ls -d /Applications/Xcode*.app
+          XC=$(ls -d /Applications/Xcode_*.app | grep -v beta | sort -V | tail -1)
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+      - name: Instalar dependencias
+        working-directory: app
+        run: npm ci
+      - name: Copiar los datos más recientes a la app
+        run: |
+          cp docs/data/dataset.json app/assets/dataset.json
+          if [ -f docs/data/diputados.json ]; then cp docs/data/diputados.json app/assets/diputados.json; fi
+      - name: Generar proyecto iOS
+        working-directory: app
+        run: npx expo prebuild --platform ios --no-install
+      - name: Instalar pods
+        working-directory: app/ios
+        run: pod install
+      - name: Compilar para el simulador
+        working-directory: app
+        run: |
+          set -o pipefail
+          xcodebuild -workspace ios/PlenoAbierto.xcworkspace -scheme PlenoAbierto -configuration Release \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO | tail -80
+      - name: Abrir la app en un iPhone simulado
+        run: bash .github/scripts/probar-ios.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: capturas-iphone
+          path: capturas-ios/
+          retention-days: 30
+
+  subir:
+    needs: simulador
+    if: startsWith(github.ref, 'refs/tags/v') || inputs.subir
+    runs-on: macos-15
+    timeout-minutes: 90
+    env:
+      ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      ASC_KEY_B64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 }}
+      TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - name: Comprobar secretos
+        run: |
+          for v in ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_B64 TEAM_ID; do
+            if [ -z "${!v}" ]; then echo "::error::Falta el secreto $v"; exit 1; fi
+          done
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Elegir la versión más reciente de Xcode
+        run: |
+          XC=$(ls -d /Applications/Xcode_*.app | grep -v beta | sort -V | tail -1)
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+      - name: Preparar proyecto
+        run: |
+          cd app && npm ci
+          cp ../docs/data/dataset.json assets/dataset.json
+          if [ -f ../docs/data/diputados.json ]; then cp ../docs/data/diputados.json assets/diputados.json; fi
+          npx expo prebuild --platform ios --no-install
+          cd ios && pod install
+      - name: Firmar y subir a App Store Connect
+        working-directory: app
+        run: |
+          set -o pipefail
+          mkdir -p ~/.appstoreconnect/private_keys
+          KEY=~/.appstoreconnect/private_keys/AuthKey_$ASC_KEY_ID.p8
+          echo "$ASC_KEY_B64" | base64 --decode > "$KEY"
+          AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$KEY" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+          xcodebuild -workspace ios/PlenoAbierto.xcworkspace -scheme PlenoAbierto -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath build/PlenoAbierto.xcarchive \
+            DEVELOPMENT_TEAM="$TEAM_ID" CODE_SIGN_STYLE=Automatic CURRENT_PROJECT_VERSION=${{ github.run_number }} \
+            "${AUTH[@]}" archive | tail -60
+          cat > build/opciones.plist <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0"><dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>$TEAM_ID</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>uploadSymbols</key><true/>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+          </dict></plist>
+          PLIST
+          xcodebuild -exportArchive -archivePath build/PlenoAbierto.xcarchive -exportOptionsPlist build/opciones.plist \
+            -exportPath build/exportado "${AUTH[@]}" | tail -40
+          rm -f "$KEY"

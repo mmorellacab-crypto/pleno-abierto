@@ -3,7 +3,7 @@
 Componentes de software libre incluidos en la app Pleno Abierto (dependencias de producción).
 Generado automáticamente con `scripts/licencias-terceros.mjs`.
 
-Resumen: MIT (415), BlueOak-1.0.0 (4), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), Unlicense (2), CC-BY-4.0 (1), (MIT OR Apache-2.0) (1), 0BSD (1), MPL-2.0 (3), (BSD-3-Clause OR GPL-2.0) (1), BSD-2-Clause (3), (MIT OR CC0-1.0) (2).
+Resumen: MIT (416), BlueOak-1.0.0 (4), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), Unlicense (2), CC-BY-4.0 (1), (MIT OR Apache-2.0) (1), 0BSD (1), MPL-2.0 (3), (BSD-3-Clause OR GPL-2.0) (1), BSD-2-Clause (3), (MIT OR CC0-1.0) (2).
 
 | Paquete | Versión | Licencia |
 |---|---|---|
@@ -382,6 +382,7 @@ Resumen: MIT (415), BlueOak-1.0.0 (4), ISC (22), BSD-3-Clause (7), Python-2.0 (1
 | react-dom | 19.3.0 | MIT |
 | react-is | 18.3.1 | MIT |
 | react-native | 0.88.1 | MIT |
+| react-native-safe-area-context | 5.11.1 | MIT |
 | react-native-view-shot | 6.1.1 | MIT |
 | react-native-web | 0.21.4 | MIT |
 | react-refresh | 0.14.2 | MIT |
@@ -11440,6 +11441,32 @@ SOFTWARE.
 MIT License
 
 Copyright (c) Meta Platforms, Inc. and affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+### react-native-safe-area-context@5.11.1
+
+```
+MIT License
+
+Copyright (c) 2019 Th3rd Wave
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

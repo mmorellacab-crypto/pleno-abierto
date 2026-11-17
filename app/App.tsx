@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { BackHandler, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Linking, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { alAbrirAviso } from './src/avisos';
 import { datosActualizados, datosIncluidos, diputadosActualizados, diputadosLocales } from './src/datos';
 import { SERIF, UI } from './src/estilo';
@@ -38,7 +39,20 @@ const SUB_MAS: Record<SubMas, string> = {
   fuentes: 'Fuentes, licencias y privacidad',
 };
 
+// Enlaces internos: plenoabierto://leyes, vota, brujula, diputados, mas, partidos, avisos, promesas, fuentes, ley/<id>
+const RUTA_PESTAÑA: Record<string, Pestaña> = { leyes: 'leyes', vota: 'vota', brujula: 'test', test: 'test', diputados: 'diputados', mas: 'mas' };
+const RUTA_MAS: SubMas[] = ['partidos', 'avisos', 'promesas', 'fuentes'];
+
 export default function App() {
+  return (
+    <SafeAreaProvider>
+      <Contenido />
+    </SafeAreaProvider>
+  );
+}
+
+function Contenido() {
+  const margen = useSafeAreaInsets();
   const [datos, setDatos] = useState<Dataset>(datosIncluidos);
   const [dip, setDip] = useState<DatosDiputados>(diputadosLocales);
   const [pestaña, setPestaña] = useState<Pestaña>('leyes');
@@ -67,6 +81,29 @@ export default function App() {
       }),
     [datos],
   );
+
+  useEffect(() => {
+    const abrirEnlace = (url?: string | null) => {
+      if (!url) return;
+      const ruta = url.replace(/^[a-z]+:\/\//i, '').replace(/^\/+/, '').split(/[?#]/)[0];
+      const [a, b] = ruta.split('/').map((x) => decodeURIComponent(x || ''));
+      if (a === 'ley' && b) {
+        const ley = datos.leyes.find((l) => l.id === b);
+        if (ley) setAbierta(ley);
+      } else if (RUTA_MAS.includes(a as SubMas)) {
+        setAbierta(null);
+        setPestaña('mas');
+        setMas(a as SubMas);
+      } else if (RUTA_PESTAÑA[a]) {
+        setAbierta(null);
+        setPestaña(RUTA_PESTAÑA[a]);
+        if (a === 'mas') setMas('menu');
+      }
+    };
+    Linking.getInitialURL().then(abrirEnlace).catch(() => {});
+    const sub = Linking.addEventListener('url', ({ url }) => abrirEnlace(url));
+    return () => sub.remove();
+  }, [datos]);
 
   useEffect(() => {
     if (Platform.OS !== 'android') return;
@@ -98,7 +135,7 @@ export default function App() {
   return (
     <View style={s.raiz}>
       <StatusBar style="light" />
-      <View style={s.barraSup}>
+      <View style={[s.barraSup, { paddingTop: margen.top + 14, minHeight: margen.top + 82 }]}>
         {volver ? (
           <Pressable onPress={volver} accessibilityRole="button" accessibilityLabel="Volver" style={s.volver}>
             <Text style={s.volverTxt}>‹ {abierta ? 'Volver' : SUB_MAS[mas]}</Text>
@@ -114,7 +151,7 @@ export default function App() {
       <View style={s.cuerpo}>{cuerpo}</View>
 
       {!abierta && (
-        <View style={s.tabs} accessibilityRole="tablist">
+        <View style={[s.tabs, { paddingBottom: Math.max(margen.bottom, 10) + 4 }]} accessibilityRole="tablist">
           {PESTAÑAS.map((p) => {
             const on = p.id === pestaña;
             return (
@@ -144,13 +181,11 @@ export default function App() {
 const s = StyleSheet.create({
   raiz: { flex: 1, backgroundColor: UI.fondo },
   barraSup: {
-    paddingTop: Platform.OS === 'android' ? 46 : 52,
     paddingHorizontal: 18,
     paddingBottom: 14,
     backgroundColor: UI.marca,
     borderBottomLeftRadius: 22,
     borderBottomRightRadius: 22,
-    minHeight: 104,
     justifyContent: 'flex-end',
   },
   marca: { fontFamily: SERIF, fontSize: 26, fontWeight: '700', color: UI.sobreMarca },
@@ -163,7 +198,6 @@ const s = StyleSheet.create({
     backgroundColor: UI.superficie,
     borderTopWidth: 1,
     borderTopColor: UI.linea,
-    paddingBottom: Platform.OS === 'android' ? 16 : 24,
     paddingTop: 6,
   },
   tab: { flex: 1, alignItems: 'center', paddingVertical: 2 },
