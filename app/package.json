@@ -33,5 +33,10 @@
     "validar-test": "tsc -p tsconfig.validar.json && node .validar/scripts/validar-test.js"
   },
   "private": true,
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "overrides": {
+    "@expo/fingerprint": {
+      "minimatch": "^11.0.9"
+    }
+  }
 }

@@ -3,7 +3,7 @@
 Componentes de software libre incluidos en la app Pleno Abierto (dependencias de producción).
 Generado automáticamente con `scripts/licencias-terceros.mjs`.
 
-Resumen: MIT (415), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), Unlicense (2), CC-BY-4.0 (1), (MIT OR Apache-2.0) (1), BlueOak-1.0.0 (3), 0BSD (1), MPL-2.0 (3), (BSD-3-Clause OR GPL-2.0) (1), BSD-2-Clause (3), (MIT OR CC0-1.0) (2).
+Resumen: MIT (415), BlueOak-1.0.0 (4), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), Unlicense (2), CC-BY-4.0 (1), (MIT OR Apache-2.0) (1), 0BSD (1), MPL-2.0 (3), (BSD-3-Clause OR GPL-2.0) (1), BSD-2-Clause (3), (MIT OR CC0-1.0) (2).
 
 | Paquete | Versión | Licencia |
 |---|---|---|
@@ -107,6 +107,7 @@ Resumen: MIT (415), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | @expo/sudo-prompt | 9.3.2 | MIT |
 | @expo/ws-tunnel | 2.0.1 | MIT |
 | @expo/xcpretty | 4.4.7 | MIT |
+| @isaacs/nonrecursive-glob-match | 1.1.0 | BlueOak-1.0.0 |
 | @isaacs/ttlcache | 1.4.1 | ISC |
 | @jest/schemas | 29.6.3 | MIT |
 | @jest/types | 29.6.3 | MIT |
@@ -335,7 +336,7 @@ Resumen: MIT (415), ISC (22), BSD-3-Clause (7), Python-2.0 (1), Apache-2.0 (6), 
 | mime-types | 2.1.35 | MIT |
 | mime-types | 3.0.2 | MIT |
 | mimic-fn | 1.2.0 | MIT |
-| minimatch | 10.2.6 | BlueOak-1.0.0 |
+| minimatch | 11.0.9 | BlueOak-1.0.0 |
 | ms | 2.1.3 | MIT |
 | ms | 2.0.0 | MIT |
 | multitars | 1.0.2 | MIT |
@@ -3143,6 +3144,66 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```
+
+### @isaacs/nonrecursive-glob-match@1.1.0
+
+```
+# Blue Oak Model License
+
+Version 1.0.0
+
+## Purpose
+
+This license gives everyone as much permission to work with
+this software as possible, while protecting contributors
+from liability.
+
+## Acceptance
+
+In order to receive this license, you must agree to its
+rules.  The rules of this license are both obligations
+under that agreement and conditions to your license.
+You must not do anything with this software that triggers
+a rule that you cannot or will not follow.
+
+## Copyright
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe that contributor's
+copyright in it.
+
+## Notices
+
+You must ensure that everyone who gets a copy of
+any part of this software from you, with or without
+changes, also gets the text of this license or a link to
+<https://blueoakcouncil.org/license/1.0.0>.
+
+## Excuse
+
+If anyone notifies you in writing that you have not
+complied with [Notices](#notices), you can keep your
+license by taking all practical steps to comply within 30
+days after the notice.  If you do not do so, your license
+ends immediately.
+
+## Patent
+
+Each contributor licenses you to do everything with this
+software that would otherwise infringe any patent claims
+they can license or become able to license.
+
+## Reliability
+
+No contributor can revoke this license.
+
+## No Liability
+
+***As far as the law allows, this software comes as is,
+without any warranty or condition, and no contributor
+will be liable to anyone for any damages related to this
+software or this license, under any kind of legal claim.***
 ```
 
 ### @isaacs/ttlcache@1.4.1
@@ -9973,7 +10034,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
 
-### minimatch@10.2.6
+### minimatch@11.0.9
 
 ```
 # Blue Oak Model License
