@@ -29,7 +29,7 @@ jobs:
       EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
       ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
       ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
-      ASC_KEY_B64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 }}
+      ASC_KEY_B64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 || secrets.APP_STORE_CONNECT_KEY_P }}
       EXPO_APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       EXPO_APPLE_TEAM_TYPE: INDIVIDUAL
       EXPO_NO_TELEMETRY: '1'
