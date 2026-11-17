@@ -51,27 +51,38 @@ def paso(nombre):
 
 
 def patch_tolerante(path, tipo, id_, attrs):
-    """PATCH que descarta atributos que esta versión de la API no reconozca."""
+    """PATCH que se adapta a cambios de Apple: quita campos que ya no existen y responde
+    «no/ninguno» a preguntas obligatorias nuevas."""
     attrs = dict(attrs)
-    for _ in range(len(attrs) + 1):
+    for _ in range(3 * len(attrs) + 10):
         r = api('PATCH', path, {'data': {'type': tipo, 'id': id_, 'attributes': attrs}}, ok_error=True)
         if '_error' not in r:
             return r
-        malos = []
+        cambios = False
         try:
-            for err in json.loads(r['_texto']).get('errors', []):
-                p = (err.get('source') or {}).get('pointer', '')
-                if p.startswith('/data/attributes/'):
-                    malos.append(p.split('/')[-1])
+            errores = json.loads(r['_texto']).get('errors', [])
         except Exception:
-            pass
-        malos = [m for m in malos if m in attrs]
-        if not malos:
-            print(f'::error::PATCH {path}: {r["_texto"][:1200]}')
+            errores = []
+        for err in errores:
+            p = (err.get('source') or {}).get('pointer', '')
+            if not p.startswith('/data/attributes/'):
+                continue
+            campo, codigo = p.split('/')[-1], err.get('code', '')
+            if 'REQUIRED' in codigo and campo not in attrs:
+                attrs[campo] = False
+                print('  (pregunta nueva de Apple respondida «no»:', campo + ')')
+                cambios = True
+            elif campo in attrs and attrs[campo] is False and 'REQUIRED' not in codigo and 'UNKNOWN' not in codigo:
+                attrs[campo] = 'NONE'
+                print('  (pregunta nueva de Apple respondida «ninguno»:', campo + ')')
+                cambios = True
+            elif campo in attrs:
+                print('  (se omite el campo no admitido:', campo + ')')
+                attrs.pop(campo)
+                cambios = True
+        if not cambios:
+            print(f'::error::PATCH {path}: {r["_texto"][:1500]}')
             raise SystemExit(1)
-        for m in malos:
-            print('  (se omite el campo no admitido:', m + ')')
-            attrs.pop(m)
     raise SystemExit(1)
 
 
