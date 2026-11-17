@@ -211,6 +211,16 @@ for f in sorted(glob.glob('tienda/app-store/capturas/*.png')):
 paso('Datos para el revisor de Apple')
 contacto = {k: os.environ.get(v, '').strip() for k, v in [('contactFirstName', 'REVIEW_NOMBRE'), ('contactLastName', 'REVIEW_APELLIDOS'),
                                                           ('contactEmail', 'REVIEW_EMAIL'), ('contactPhone', 'REVIEW_TELEFONO')]}
+# También se aceptan como parámetros privados de la ejecución manual (se leen del evento, nunca se imprimen)
+try:
+    _ev = json.load(open(os.environ.get('GITHUB_EVENT_PATH', '/dev/null'))).get('inputs') or {}
+except Exception:
+    _ev = {}
+for k, campo in (('contactEmail', 'email_revisor'), ('contactPhone', 'telefono_revisor')):
+    v = (_ev.get(campo) or '').strip()
+    if v and not contacto[k]:
+        print('::add-mask::' + v)
+        contacto[k] = v
 rd = api('GET', f'/v1/appStoreVersions/{VID}/appStoreReviewDetail', ok_error=True)
 rd_id = (rd.get('data') or {}).get('id')
 attrs = {'demoAccountRequired': False, 'notes': F['notasRevisor']}

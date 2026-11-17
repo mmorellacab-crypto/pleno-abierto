@@ -8,6 +8,14 @@ on:
         description: "Enviar a revisión de Apple al terminar"
         type: boolean
         default: false
+      email_revisor:
+        description: "Email de contacto para el revisor de Apple (no se publica ni se muestra en los registros)"
+        type: string
+        default: ''
+      telefono_revisor:
+        description: "Teléfono para el revisor de Apple, con prefijo +34 (no se publica)"
+        type: string
+        default: ''
 
 permissions:
   contents: read
