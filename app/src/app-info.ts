@@ -9,4 +9,6 @@ export const APP = {
   licencia: 'GPL-3.0',
   repositorio: repo,
   privacidad: pages ? `${pages}/privacidad.html` : `${repo}`,
+  avisoLegal: pages ? `${pages}/aviso-legal.html` : `${repo}`,
+  incidencias: `${repo.replace(/\/$/, '')}/issues`,
 };

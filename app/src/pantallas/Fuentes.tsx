@@ -13,6 +13,7 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
         <Text style={s.avisoTxt}>
           {APP.nombre} es una app independiente, gratuita y sin publicidad. No representa al Congreso de los Diputados,
           a ninguna administración pública ni a ningún partido político, y no está afiliada a El Congreso en tu mano.
+          No ofrece ningún servicio público ni recomienda el voto a ningún partido.
         </Text>
       </View>
 
@@ -30,6 +31,16 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
         </Text>
         <Enlace texto="Datos abiertos del Congreso: votaciones" url={congreso.url} />
         <Enlace texto="Condiciones de reutilización (aviso legal del Congreso)" url={congreso.condiciones} />
+      </View>
+
+      <View style={s.caja}>
+        <Text style={s.h}>Texto de las leyes (BOE)</Text>
+        <Text style={s.p}>
+          <Text style={s.b}>Origen: Boletín Oficial del Estado.</Text> Los resúmenes de «Vota tú también» se han redactado
+          con ayuda de inteligencia artificial a partir del texto publicado en el BOE (las leyes no tienen derechos de
+          autor, art. 13 LPI). Son orientativos y pueden contener errores: cada ley enlaza a su texto oficial.
+        </Text>
+        <Enlace texto="Boletín Oficial del Estado (boe.es)" url="https://www.boe.es" />
       </View>
 
       <View style={s.caja}>
@@ -54,6 +65,17 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
           formato de afirmación de las aplicaciones de consejo de voto. La posición de cada grupo se calcula solo con sus
           votos oficiales. Cada pregunta muestra su fuente y las referencias completas aparecen al final del test.
         </Text>
+      </View>
+
+      <View style={s.caja}>
+        <Text style={s.h}>Neutralidad y exactitud</Text>
+        <Text style={s.p}>
+          La Brújula y «Vota tú también» calculan afinidades solo con los votos oficiales y tus respuestas, que no se
+          guardan ni se envían. No son encuestas ni sondeos electorales. La información se ofrece con cuidado pero sin
+          garantía: para cualquier uso con efectos jurídicos consulta la fuente oficial. Si ves un error, avísanos.
+        </Text>
+        <Enlace texto="Informar de un error" url={APP.incidencias} />
+        <Enlace texto="Aviso legal" url={APP.avisoLegal} />
       </View>
 
       <View style={s.caja}>
