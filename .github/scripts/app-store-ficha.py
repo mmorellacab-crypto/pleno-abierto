@@ -24,13 +24,20 @@ APP = F['appId']
 PENDIENTE = []
 
 
-def token():
+_TOKEN = {'valor': None, 'caduca': 0}
+
+
+def token(nuevo=False):
+    """Un mismo token durante ~15 min (Apple rechaza a veces tokens recién emitidos)."""
     now = int(time.time())
-    return jwt.encode({'iss': ISSUER, 'iat': now, 'exp': now + 900, 'aud': 'appstoreconnect-v1'}, KEY,
-                      algorithm='ES256', headers={'kid': KEY_ID, 'typ': 'JWT'})
+    if nuevo or not _TOKEN['valor'] or now > _TOKEN['caduca'] - 60:
+        _TOKEN['valor'] = jwt.encode({'iss': ISSUER, 'iat': now - 60, 'exp': now + 1080, 'aud': 'appstoreconnect-v1'},
+                                     KEY, algorithm='ES256', headers={'kid': KEY_ID, 'typ': 'JWT'})
+        _TOKEN['caduca'] = now + 1080
+    return _TOKEN['valor']
 
 
-def api(method, path, body=None, ok_error=False):
+def api(method, path, body=None, ok_error=False, intento=0):
     url = path if path.startswith('http') else API + path
     req = urllib.request.Request(url, method=method, data=json.dumps(body).encode() if body is not None else None,
                                  headers={'Authorization': 'Bearer ' + token(), 'Content-Type': 'application/json'})
@@ -40,6 +47,13 @@ def api(method, path, body=None, ok_error=False):
             return json.loads(t) if t else {}
     except urllib.error.HTTPError as e:
         txt = e.read().decode()
+        if e.code in (401, 429, 500, 502, 503) and intento < 4:
+            espera = 5 * (intento + 1)
+            print(f'  (Apple respondió {e.code}; reintento en {espera} s)')
+            time.sleep(espera)
+            if e.code == 401:
+                token(nuevo=True)
+            return api(method, path, body, ok_error, intento + 1)
         if ok_error:
             return {'_error': e.code, '_texto': txt}
         print(f'::error::{method} {path} → {e.code}: {txt[:1200]}')
