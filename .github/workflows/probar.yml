@@ -14,7 +14,7 @@ on:
         required: true
 
 permissions:
-  contents: read
+  contents: write # solo para guardar capturas en la rama «capturas»
   actions: read
 
 jobs:
@@ -44,6 +44,11 @@ jobs:
           target: google_apis
           disable-animations: true
           script: bash .github/scripts/probar-arranque.sh
+      - name: Guardar capturas en la rama «capturas»
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/publicar-capturas.sh capturas-android android
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:

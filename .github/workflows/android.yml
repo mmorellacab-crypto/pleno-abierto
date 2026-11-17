@@ -127,7 +127,7 @@ jobs:
   probar:
     needs: android
     permissions:
-      contents: read
+      contents: write
       actions: read
     uses: ./.github/workflows/probar.yml
     with:

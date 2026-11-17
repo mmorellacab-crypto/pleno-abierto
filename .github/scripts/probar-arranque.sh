@@ -7,6 +7,11 @@ adb install -r "$APK" || exit 1
 adb logcat -c
 adb shell monkey -p es.plenoabierto.app -c android.intent.category.LAUNCHER 1
 sleep 30
+mkdir -p capturas-android
+adb exec-out screencap -p > capturas-android/inicio.png || true
+adb shell am start -W -a android.intent.action.VIEW -d "plenoabierto://ley/real-decreto-ley-14-2026-de-9-de-junio-de-medidas-de-promoci" es.plenoabierto.app >/dev/null 2>&1 || true
+sleep 5
+adb exec-out screencap -p > capturas-android/detalle.png || true
 adb logcat -d > logcat.txt || true
 echo "===== ERRORES ====="
 grep -E "FATAL EXCEPTION|AndroidRuntime|ReactNativeJS|SoLoader|Exception|Error" logcat.txt | grep -v chatty | head -200 || true
