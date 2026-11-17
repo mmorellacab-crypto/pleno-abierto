@@ -1,0 +1,114 @@
+# Compila la app de iPhone en los Mac de Expo (EAS Build, plan gratuito) y la sube a App Store Connect.
+# No hace falta Mac. La firma se prepara con la API de App Store Connect (.github/scripts/ios-credenciales.py).
+# Secretos: EXPO_TOKEN, APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID,
+#           APP_STORE_CONNECT_KEY_P8_BASE64, APPLE_TEAM_ID.
+name: Publicar iPhone (Expo)
+
+on:
+  workflow_dispatch:
+    inputs:
+      subir:
+        description: "Subir a App Store Connect al terminar"
+        type: boolean
+        default: true
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write # solo para guardar el certificado cifrado en la rama «credenciales»
+
+concurrency:
+  group: ios-eas
+  cancel-in-progress: false
+
+jobs:
+  eas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      ASC_KEY_B64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 }}
+      EXPO_APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      EXPO_APPLE_TEAM_TYPE: INDIVIDUAL
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - name: Comprobar secretos
+        run: |
+          for v in EXPO_TOKEN ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_B64 EXPO_APPLE_TEAM_ID; do
+            if [ -z "${!v}" ]; then echo "::error::Falta el secreto $v"; exit 1; fi
+          done
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Instalar dependencias
+        working-directory: app
+        run: npm ci
+      - name: Copiar los datos más recientes a la app
+        run: |
+          cp docs/data/dataset.json app/assets/dataset.json
+          if [ -f docs/data/diputados.json ]; then cp docs/data/diputados.json app/assets/diputados.json; fi
+      - name: Clave de App Store Connect
+        run: |
+          umask 077
+          echo "$ASC_KEY_B64" | base64 --decode > app/AuthKey.p8
+          echo "EXPO_ASC_API_KEY_PATH=$PWD/app/AuthKey.p8" >> "$GITHUB_ENV"
+          echo "EXPO_ASC_KEY_ID=$ASC_KEY_ID" >> "$GITHUB_ENV"
+          echo "EXPO_ASC_ISSUER_ID=$ASC_ISSUER_ID" >> "$GITHUB_ENV"
+          node -e '
+            const fs=require("fs");const p="app/eas.json";const d=JSON.parse(fs.readFileSync(p));
+            Object.assign(d.submit.production.ios,{ascApiKeyId:process.env.ASC_KEY_ID,ascApiKeyIssuerId:process.env.ASC_ISSUER_ID,appleTeamId:process.env.EXPO_APPLE_TEAM_ID});
+            fs.writeFileSync(p,JSON.stringify(d,null,2));'
+      - name: Recuperar certificado cifrado (rama «credenciales»)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          if git ls-remote --exit-code --heads "$URL" credenciales >/dev/null 2>&1; then
+            git clone -q --depth 1 --branch credenciales "$URL" ../credenciales
+          else
+            mkdir ../credenciales && git -C ../credenciales init -q && git -C ../credenciales checkout -q --orphan credenciales
+          fi
+      - name: Preparar la firma con la API de Apple
+        id: firma
+        env:
+          ASC_KEY_PATH: app/AuthKey.p8
+          CRED_DIR: ../credenciales
+        run: |
+          pip install --quiet pyjwt cryptography
+          python3 .github/scripts/ios-credenciales.py
+      - name: Guardar certificado cifrado si es nuevo
+        if: steps.firma.outputs.cert_nuevo == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd ../credenciales
+          cat > LEEME.md <<'TXT'
+          # Credenciales cifradas
+          Certificado de distribución de Apple de Pleno Abierto, cifrado con AES-256 (clave derivada de un
+          secreto del repositorio). Sin ese secreto no se puede descifrar. Lo usa el workflow «Publicar iPhone (Expo)».
+          TXT
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -q -m "Certificado de distribución iOS (cifrado)"
+          git push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:credenciales
+      - name: Vincular el proyecto de Expo
+        working-directory: app
+        run: |
+          npx --yes eas-cli@latest whoami
+          npx --yes eas-cli@latest init --non-interactive --force
+      - name: Compilar en Expo y subir a App Store Connect
+        working-directory: app
+        run: |
+          EXTRA=""
+          if [ "${{ inputs.subir }}" != "false" ]; then EXTRA="--auto-submit"; fi
+          npx --yes eas-cli@latest build --platform ios --profile production --non-interactive --wait $EXTRA
+      - name: Borrar credenciales del equipo
+        if: always()
+        run: rm -rf app/AuthKey.p8 app/credentials.json app/credenciales-ios ../credenciales

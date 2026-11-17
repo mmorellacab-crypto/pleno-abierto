@@ -1,0 +1,30 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "production": {
+      "credentialsSource": "local",
+      "autoIncrement": true,
+      "ios": {
+        "image": "latest"
+      },
+      "env": {
+        "EXPO_NO_TELEMETRY": "1",
+        "EXPO_PUBLIC_REPO_URL": "https://github.com/mmorellacab-crypto/pleno-abierto",
+        "EXPO_PUBLIC_PAGES_URL": "https://mmorellacab-crypto.github.io/pleno-abierto",
+        "EXPO_PUBLIC_DATA_URL": "https://mmorellacab-crypto.github.io/pleno-abierto/data/dataset.json"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6835964967",
+        "ascApiKeyPath": "./AuthKey.p8",
+        "appleTeamId": "92X7MS8TW9"
+      }
+    }
+  }
+}

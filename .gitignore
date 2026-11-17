@@ -13,3 +13,9 @@ Thumbs.db
 *.p12
 *.pfx
 clave-base64*.txt
+
+# Firma iOS generada en CI (nunca se sube)
+app/credentials.json
+app/credenciales-ios/
+app/AuthKey.p8
+*.p8
