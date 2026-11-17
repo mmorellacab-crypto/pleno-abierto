@@ -1,0 +1,40 @@
+# Rellena la ficha de App Store Connect con la API de Apple y, si se pide, la envía a revisión.
+name: Ficha App Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      enviar:
+        description: "Enviar a revisión de Apple al terminar"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  ficha:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      ASC_KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+      ASC_KEY_B64: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 || secrets.APP_STORE_CONNECT_KEY_P }}
+      REVIEW_NOMBRE: Marc
+      REVIEW_APELLIDOS: Morella Cabanes
+      REVIEW_EMAIL: ${{ secrets.APPLE_REVIEW_EMAIL }}
+      REVIEW_TELEFONO: ${{ secrets.APPLE_REVIEW_TELEFONO }}
+      ENVIAR: ${{ inputs.enviar && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Rellenar ficha
+        run: |
+          umask 077
+          echo "$ASC_KEY_B64" | base64 --decode > /tmp/AuthKey.p8
+          pip install --quiet pyjwt cryptography
+          ASC_KEY_PATH=/tmp/AuthKey.p8 python3 .github/scripts/app-store-ficha.py
+      - name: Borrar clave
+        if: always()
+        run: rm -f /tmp/AuthKey.p8
