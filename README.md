@@ -47,12 +47,16 @@ El Congreso en tu mano ────┘        (GitHub Actions, cada lunes)      
 
 En GitHub Desktop: *Repository → Create tag…* (`v1.0.0`) y *Push*. El workflow publicará el APK en la sección *Releases*, donde cualquiera puede descargarlo gratis.
 
+## Autenticidad y seguridad
+
+Las versiones oficiales se firman con la clave de Pleno Abierto. La huella del certificado, los checksums y cómo verificarlos están en [SECURITY.md](SECURITY.md).
+
 ## Google Play (opcional)
 
 Hace falta una cuenta de desarrollador (pago único de 25 $) y, en cuentas personales nuevas, una prueba cerrada con 12 testers durante 14 días. Para firmar:
 
-1. Crea una clave de subida (en Android Studio o con `keytool`) y guárdala en un lugar seguro; **no la subas al repositorio**.
-2. Añade en *Settings → Secrets and variables → Actions*: `ANDROID_KEYSTORE_BASE64` (el fichero .jks en base64), `ANDROID_KEYSTORE_PASSWORD` y `ANDROID_KEY_ALIAS`.
+1. La clave de firma oficial ya existe (ver [SECURITY.md](SECURITY.md)). Guárdala en un lugar seguro; **nunca la subas al repositorio**.
+2. Comprueba que están en *Settings → Secrets and variables → Actions*: `ANDROID_KEYSTORE_BASE64` (el fichero .jks en base64), `ANDROID_KEYSTORE_PASSWORD` y `ANDROID_KEY_ALIAS`.
 3. Activa *Play App Signing* al crear la app en Play Console y sube el `.aab`.
 4. Ficha de la tienda: incluye las fuentes (con enlaces), el aviso de no afiliación y la URL de privacidad (`https://TU_USUARIO.github.io/pleno-abierto/privacidad.html`). En *Contenido de la app* declara: sin anuncios, sin recogida de datos, y «no es una app gubernamental».
 

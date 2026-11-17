@@ -10,3 +10,6 @@ app/ios/
 *.aab
 .DS_Store
 Thumbs.db
+*.p12
+*.pfx
+clave-base64*.txt

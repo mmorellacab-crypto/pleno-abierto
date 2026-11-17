@@ -1,0 +1,19 @@
+# Avisa y propone actualizaciones de seguridad de las dependencias (gratis en GitHub).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      acciones:
+        patterns: ['*']
+  - package-ecosystem: npm
+    directory: /app
+    schedule:
+      interval: monthly
+    # Las versiones nativas de Expo deben ir juntas: solo se proponen parches de seguridad.
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major', 'version-update:semver-minor']
