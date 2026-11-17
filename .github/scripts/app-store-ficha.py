@@ -207,21 +207,25 @@ for f in sorted(glob.glob('tienda/app-store/capturas/*.png')):
         'attributes': {'uploaded': True, 'sourceFileChecksum': hashlib.md5(datos).hexdigest()}}})
     print('  subida', os.path.basename(f))
 
-# 6. Contacto para el revisor
+# 6. Contacto para el revisor (opcional aquí: también se puede rellenar en la web)
 paso('Datos para el revisor de Apple')
 contacto = {k: os.environ.get(v, '').strip() for k, v in [('contactFirstName', 'REVIEW_NOMBRE'), ('contactLastName', 'REVIEW_APELLIDOS'),
                                                           ('contactEmail', 'REVIEW_EMAIL'), ('contactPhone', 'REVIEW_TELEFONO')]}
 rd = api('GET', f'/v1/appStoreVersions/{VID}/appStoreReviewDetail', ok_error=True)
+rd_id = (rd.get('data') or {}).get('id')
 attrs = {'demoAccountRequired': False, 'notes': F['notasRevisor']}
-attrs.update({k: v for k, v in contacto.items() if v})
-if (rd.get('data') or {}).get('id'):
-    patch_tolerante(f"/v1/appStoreReviewDetails/{rd['data']['id']}", 'appStoreReviewDetails', rd['data']['id'], attrs)
-else:
+if all(contacto.values()):
+    attrs.update(contacto)
+if rd_id:
+    patch_tolerante(f"/v1/appStoreReviewDetails/{rd_id}", 'appStoreReviewDetails', rd_id, attrs)
+    print('  notas para el revisor actualizadas')
+elif all(contacto.values()):
     api('POST', '/v1/appStoreReviewDetails', {'data': {'type': 'appStoreReviewDetails', 'attributes': attrs,
         'relationships': {'appStoreVersion': {'data': {'type': 'appStoreVersions', 'id': VID}}}}})
-if not all(contacto.values()):
-    PENDIENTE.append('faltan los datos de contacto para el revisor (secretos APPLE_REVIEW_EMAIL y APPLE_REVIEW_TELEFONO)')
-print('  notas para el revisor' + (' y contacto' if all(contacto.values()) else ' (sin contacto todavía)'))
+    print('  notas y contacto para el revisor')
+else:
+    PENDIENTE.append('el contacto para el revisor (rellénalo en la web: «Información de la revisión de la app»)')
+    print('  ::warning::Sin contacto para el revisor: se rellena en la web de App Store Connect')
 
 # 7. Envío a revisión
 paso('Envío a revisión')
