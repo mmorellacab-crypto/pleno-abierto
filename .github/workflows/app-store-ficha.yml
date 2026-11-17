@@ -29,6 +29,18 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Comprobar la clave (sin mostrarla)
+        env:
+          B64_NUEVO: ${{ secrets.APP_STORE_CONNECT_KEY_P8_BASE64 }}
+          B64_VIEJO: ${{ secrets.APP_STORE_CONNECT_KEY_P }}
+        run: |
+          for n in B64_NUEVO B64_VIEJO; do
+            v="${!n}"; [ -z "$v" ] && { echo "$n: vacío"; continue; }
+            d=$(echo "$v" | base64 --decode 2>/dev/null | head -c 2000)
+            echo "$n: longitud=${#v} primera_linea=$(echo "$d" | head -1) sha=$(echo "$v" | base64 --decode 2>/dev/null | sha256sum | cut -c1-16)"
+          done
+          echo "KEY_ID: longitud=${#ASC_KEY_ID} sha=$(printf %s "$ASC_KEY_ID" | sha256sum | cut -c1-16)"
+          echo "ISSUER: longitud=${#ASC_ISSUER_ID} formato_uuid=$(printf %s "$ASC_ISSUER_ID" | grep -cE '^[0-9a-f-]{36}$')"
       - name: Rellenar ficha
         run: |
           umask 077
