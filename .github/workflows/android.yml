@@ -87,7 +87,11 @@ jobs:
             "$BT/apksigner" sign --ks clave.jks --ks-pass env:KS_PASS --ks-key-alias "$KS_ALIAS" --out salida/pleno-abierto.apk salida/alineado.apk
             rm salida/alineado.apk
             cp "$AAB" salida/pleno-abierto.aab
-            jarsigner -keystore clave.jks -storepass "$KS_PASS" salida/pleno-abierto.aab "$KS_ALIAS"
+            # Gradle deja el AAB firmado con la clave de depuración; Google Play
+            # rechaza un AAB con más de una cadena de certificados, así que se
+            # quita esa firma antes de firmar con la clave oficial.
+            zip -q -d salida/pleno-abierto.aab 'META-INF/*.SF' 'META-INF/*.RSA' 'META-INF/*.DSA' 'META-INF/*.EC' 'META-INF/MANIFEST.MF' || true
+            jarsigner -keystore clave.jks -storepass "$KS_PASS" -digestalg SHA-256 -sigalg SHA256withRSA salida/pleno-abierto.aab "$KS_ALIAS"
             rm clave.jks
             HUELLA=$("$BT/apksigner" verify --print-certs salida/pleno-abierto.apk | grep -m1 'SHA-256 digest' | awk '{print $NF}')
             echo "Huella del certificado: $HUELLA"
@@ -95,6 +99,20 @@ jobs:
               echo "::error::El APK no está firmado con la clave oficial de Pleno Abierto."
               exit 1
             fi
+            # El AAB debe tener exactamente una firma y ser la oficial.
+            FIRMAS=$(unzip -Z1 salida/pleno-abierto.aab | grep -cE '^META-INF/[^/]+\.(RSA|DSA|EC)$' || true)
+            echo "Firmas en el AAB: $FIRMAS"
+            if [ "$FIRMAS" != "1" ]; then
+              echo "::error::El AAB tiene $FIRMAS firmas; Google Play exige una sola."
+              exit 1
+            fi
+            HUELLA_AAB=$(keytool -printcert -jarfile salida/pleno-abierto.aab | grep -m1 'SHA256:' | awk '{print $NF}' | tr -d ':' | tr 'A-F' 'a-f')
+            echo "Huella del AAB: $HUELLA_AAB"
+            if [ "$HUELLA_AAB" != "$HUELLA_FIRMA" ]; then
+              echo "::error::El AAB no está firmado con la clave oficial de Pleno Abierto."
+              exit 1
+            fi
+            jarsigner -verify salida/pleno-abierto.aab >/dev/null || { echo "::error::La firma del AAB no es válida."; exit 1; }
           else
             echo "::warning::Sin clave de firma: APK firmado con clave de depuración (solo para pruebas)."
             cp "$APK" salida/pleno-abierto-prueba.apk
