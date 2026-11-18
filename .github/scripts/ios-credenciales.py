@@ -17,16 +17,17 @@ BUNDLE = os.environ.get('BUNDLE_ID', 'es.plenoabierto.app')
 CRED = os.environ['CRED_DIR']
 APP = os.environ.get('APP_DIR', 'app')
 NOMBRE_PERFIL = 'Pleno Abierto App Store (CI)'
-CLAVE_CIFRADO = hashlib.sha256(('pleno-abierto-p12:' + os.environ['ASC_KEY_B64']).encode()).hexdigest()
+# La clave de cifrado se pasa a openssl por variable de entorno (nunca en la línea de órdenes ni en los registros).
+os.environ['PLENO_CLAVE_P12'] = hashlib.sha256(('pleno-abierto-p12-v2:' + os.environ['ASC_KEY_B64']).encode()).hexdigest()
 
 
 def token():
     now = int(time.time())
-    return jwt.encode({'iss': ISSUER, 'iat': now, 'exp': now + 900, 'aud': 'appstoreconnect-v1'}, KEY,
+    return jwt.encode({'iss': ISSUER, 'iat': now - 60, 'exp': now + 900, 'aud': 'appstoreconnect-v1'}, KEY,
                       algorithm='ES256', headers={'kid': KEY_ID, 'typ': 'JWT'})
 
 
-def api(method, path, body=None):
+def api(method, path, body=None, intento=0):
     req = urllib.request.Request(API + path, method=method, data=json.dumps(body).encode() if body else None,
                                  headers={'Authorization': 'Bearer ' + token(), 'Content-Type': 'application/json'})
     try:
@@ -34,12 +35,19 @@ def api(method, path, body=None):
             txt = r.read()
             return json.loads(txt) if txt else {}
     except urllib.error.HTTPError as e:
+        if e.code in (401, 429, 500, 502, 503) and intento < 4:
+            time.sleep(5 * (intento + 1))
+            return api(method, path, body, intento + 1)
         print(f'Error {e.code} en {method} {path}: {e.read().decode()[:800]}', file=sys.stderr)
         raise
 
 
 def sh(*cmd, entrada=None):
-    return subprocess.run(cmd, check=True, capture_output=True, input=entrada).stdout
+    r = subprocess.run(cmd, capture_output=True, input=entrada)
+    if r.returncode != 0:
+        # Error sin mostrar argumentos (podrían contener datos sensibles)
+        raise RuntimeError(f'{cmd[0]} {cmd[1] if len(cmd) > 1 else ""} falló (código {r.returncode})')
+    return r.stdout
 
 
 def certificado():
@@ -49,12 +57,19 @@ def certificado():
     if os.path.exists(meta_f) and os.path.exists(enc_f):
         meta = json.load(open(meta_f))
         c = validos.get(meta['id'])
-        if c and c['attributes']['expirationDate'] > time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(time.time() + 86400 * 7)):
-            sh('openssl', 'enc', '-d', '-aes-256-cbc', '-pbkdf2', '-iter', '200000', '-in', enc_f,
-               '-out', 'ios-dist.p12', '-pass', 'pass:' + CLAVE_CIFRADO)
-            print(f"Reutilizando certificado {meta['id']} (caduca {c['attributes']['expirationDate'][:10]})")
-            return meta['id'], 'ios-dist.p12', meta['p12pass']
-        print('El certificado guardado ya no es válido: se creará otro.')
+        vigente = c and c['attributes']['expirationDate'] > time.strftime('%Y-%m-%dT%H:%M:%S', time.gmtime(time.time() + 86400 * 7))
+        if vigente and meta.get('version') == 2:
+            try:
+                sh('openssl', 'enc', '-d', '-aes-256-cbc', '-pbkdf2', '-iter', '200000', '-in', enc_f,
+                   '-out', 'ios-dist.p12', '-pass', 'env:PLENO_CLAVE_P12')
+                print(f"Reutilizando certificado {meta['id']} (caduca {c['attributes']['expirationDate'][:10]})")
+                return meta['id'], 'ios-dist.p12', meta['p12pass']
+            except RuntimeError:
+                pass
+        print('El certificado guardado no se puede usar (clave de Apple cambiada o caducado): se creará otro.')
+        if c:
+            print('Revocando el certificado anterior de esta automatización', meta['id'])
+            api('DELETE', f"/certificates/{meta['id']}")
     sh('openssl', 'genrsa', '-out', 'ios-dist.key', '2048')
     csr = sh('openssl', 'req', '-new', '-key', 'ios-dist.key', '-subj', '/CN=Pleno Abierto CI/C=ES').decode()
     r = api('POST', '/certificates', {'data': {'type': 'certificates', 'attributes': {'certificateType': 'DISTRIBUTION', 'csrContent': csr}}})
@@ -63,12 +78,13 @@ def certificado():
     open('ios-dist.cer', 'wb').write(der)
     sh('openssl', 'x509', '-inform', 'DER', '-in', 'ios-dist.cer', '-out', 'ios-dist.pem')
     p12pass = base64.urlsafe_b64encode(os.urandom(18)).decode()
+    os.environ['PLENO_P12_PASS'] = p12pass
     sh('openssl', 'pkcs12', '-export', '-legacy', '-inkey', 'ios-dist.key', '-in', 'ios-dist.pem', '-out', 'ios-dist.p12',
-       '-name', 'Pleno Abierto CI', '-passout', 'pass:' + p12pass)
+       '-name', 'Pleno Abierto CI', '-passout', 'env:PLENO_P12_PASS')
     os.makedirs(CRED, exist_ok=True)
     sh('openssl', 'enc', '-aes-256-cbc', '-pbkdf2', '-iter', '200000', '-salt', '-in', 'ios-dist.p12', '-out', enc_f,
-       '-pass', 'pass:' + CLAVE_CIFRADO)
-    json.dump({'id': cid, 'p12pass': p12pass, 'creado': time.strftime('%Y-%m-%d')}, open(meta_f, 'w'))
+       '-pass', 'env:PLENO_CLAVE_P12')
+    json.dump({'id': cid, 'p12pass': p12pass, 'creado': time.strftime('%Y-%m-%d'), 'version': 2}, open(meta_f, 'w'))
     for f in ('ios-dist.key', 'ios-dist.cer', 'ios-dist.pem'):
         os.remove(f)
     print('Certificado de distribución creado:', cid)
