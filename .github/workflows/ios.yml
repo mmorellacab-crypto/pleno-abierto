@@ -3,11 +3,9 @@
 # - Si existen los secretos de App Store Connect y lo pides (manual o etiqueta v*): firma y sube a App Store Connect.
 name: Compilar iPhone
 
+# Solo manual: los Mac de GitHub no están disponibles para esta cuenta; la versión de iPhone
+# se compila con «Publicar iPhone (Expo)».
 on:
-  push:
-    branches: [main]
-    paths: ['app/**', '.github/workflows/ios.yml', '.github/scripts/probar-ios.sh', '.github/scripts/publicar-capturas.sh']
-    tags: ['v*']
   workflow_dispatch:
     inputs:
       subir:
