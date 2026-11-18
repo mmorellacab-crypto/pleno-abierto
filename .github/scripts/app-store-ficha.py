@@ -56,7 +56,7 @@ def api(method, path, body=None, ok_error=False, intento=0):
             return api(method, path, body, ok_error, intento + 1)
         if ok_error:
             return {'_error': e.code, '_texto': txt}
-        print(f'::error::{method} {path} → {e.code}: {txt[:1200]}')
+        print(f'::error::{method} {path} → {e.code}: {txt[:6000]}')
         raise
 
 
@@ -162,6 +162,19 @@ if '_error' in disp or not (disp.get('data') or {}).get('id'):
     print(f'  disponible en {len(terr)} países o regiones')
 else:
     print('  ya tenía disponibilidad configurada')
+# China continental exige declaraciones propias (contenido de IA y evaluación de seguridad): no se distribuye allí.
+disp = api('GET', f'/v1/apps/{APP}/appAvailabilityV2', ok_error=True)
+if (disp.get('data') or {}).get('id'):
+    url = f"/v2/appAvailabilities/{disp['data']['id']}/territoryAvailabilities?include=territory&limit=200"
+    while url:
+        r = api('GET', url)
+        for ta in r['data']:
+            terr = ((ta.get('relationships') or {}).get('territory') or {}).get('data') or {}
+            if terr.get('id') == 'CHN' and ta['attributes'].get('available'):
+                api('PATCH', f"/v1/territoryAvailabilities/{ta['id']}", {'data': {'type': 'territoryAvailabilities', 'id': ta['id'],
+                    'attributes': {'available': False}}})
+                print('  China continental excluida (requiere declaraciones específicas de ese país)')
+        url = (r.get('links') or {}).get('next')
 
 # 4. Versión
 paso('Versión 1.0')
@@ -240,11 +253,15 @@ else:
 # 7. Envío a revisión
 paso('Envío a revisión')
 if os.environ.get('ENVIAR') == '1' and not PENDIENTE:
-    sub = api('POST', '/v1/reviewSubmissions', {'data': {'type': 'reviewSubmissions', 'attributes': {'platform': 'IOS'},
-              'relationships': {'app': {'data': {'type': 'apps', 'id': APP}}}}})['data']
-    api('POST', '/v1/reviewSubmissionItems', {'data': {'type': 'reviewSubmissionItems', 'relationships': {
-        'reviewSubmission': {'data': {'type': 'reviewSubmissions', 'id': sub['id']}},
-        'appStoreVersion': {'data': {'type': 'appStoreVersions', 'id': VID}}}}})
+    abiertos = [x for x in api('GET', f'/v1/reviewSubmissions?filter[app]={APP}&filter[platform]=IOS&limit=20')['data']
+                if x['attributes'].get('state') in ('READY_FOR_REVIEW', 'UNRESOLVED_ISSUES')]
+    sub = abiertos[0] if abiertos else api('POST', '/v1/reviewSubmissions', {'data': {'type': 'reviewSubmissions',
+              'attributes': {'platform': 'IOS'}, 'relationships': {'app': {'data': {'type': 'apps', 'id': APP}}}}})['data']
+    items = api('GET', f"/v1/reviewSubmissions/{sub['id']}/items", ok_error=True).get('data') or []
+    if not items:
+        api('POST', '/v1/reviewSubmissionItems', {'data': {'type': 'reviewSubmissionItems', 'relationships': {
+            'reviewSubmission': {'data': {'type': 'reviewSubmissions', 'id': sub['id']}},
+            'appStoreVersion': {'data': {'type': 'appStoreVersions', 'id': VID}}}}})
     r = api('PATCH', f"/v1/reviewSubmissions/{sub['id']}", {'data': {'type': 'reviewSubmissions', 'id': sub['id'],
             'attributes': {'submitted': True}}}, ok_error=True)
     if '_error' in r:
