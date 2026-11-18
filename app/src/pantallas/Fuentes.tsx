@@ -60,7 +60,7 @@ export default function Fuentes({ datos }: { datos: Dataset }) {
       <View style={s.caja}>
         <Text style={s.h}>Test «Brújula»</Text>
         <Text style={s.p}>
-          Sus 40 preguntas están adaptadas de escalas usadas en investigación revisada por pares (European Social Survey,
+          Sus 45 preguntas están adaptadas de escalas usadas en investigación revisada por pares (European Social Survey,
           Chapel Hill Expert Survey, CIS, escala NEP, valores de crianza de Feldman y Stenner, entre otras) o siguen el
           formato de afirmación de las aplicaciones de consejo de voto. La posición de cada grupo se calcula solo con sus
           votos oficiales. Cada pregunta muestra su fuente y las referencias completas aparecen al final del test.

@@ -29,7 +29,7 @@ function Intro({ empezar }: { empezar: () => void }) {
       <View style={s.heroe}>
         <Text style={s.heroeIcono}>🧭</Text>
         <Text style={s.heroeTitulo}>Brújula</Text>
-        <Text style={s.heroeTxt}>40 preguntas para conocer tu orientación política y compararla con lo que cada grupo votó de verdad en el Congreso.</Text>
+        <Text style={s.heroeTxt}>{PREGUNTAS.length} preguntas para conocer tu orientación política y compararla con lo que cada grupo votó de verdad en el Congreso.</Text>
       </View>
       <View style={s.caja}>
         <Titulo tam={17}>Cómo funciona</Titulo>
@@ -187,7 +187,7 @@ function Resultados({ datos, estado, setEstado }: { datos: Dataset; estado: Esta
 
       {r.respondidas < 20 && (
         <View style={[s.caja, s.avisoCaja]}>
-          <Text style={s.avisoTxt}>Has respondido {r.respondidas} de 40 preguntas: los resultados son poco fiables.</Text>
+          <Text style={s.avisoTxt}>Has respondido {r.respondidas} de {PREGUNTAS.length} preguntas: los resultados son poco fiables.</Text>
         </View>
       )}
 

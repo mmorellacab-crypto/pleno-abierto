@@ -36,7 +36,7 @@ Cita usada: «Origen de los datos: Congreso de los Diputados — Datos abiertos�
 
 ## 3. Test «Brújula»
 
-- 40 preguntas en 6 dimensiones (economía, valores sociales, autoridad, inmigración, territorio y medio ambiente), orientadas como el Chapel Hill Expert Survey.
+- 45 preguntas en 6 dimensiones (economía, valores sociales, autoridad, inmigración, territorio y medio ambiente), orientadas como el Chapel Hill Expert Survey.
 - Procedencia de los ítems: European Social Survey, ISSP, European Values Study, CIS (organización territorial y pregunta Linz–Moreno), escala NEP revisada (Dunlap et al., 2000), valores de crianza (Feldman y Stenner, 1997). Algunas afirmaciones sobre leyes concretas siguen el formato de las aplicaciones de consejo de voto (Garzia y Marschall, 2012). Cada pregunta muestra su fuente en la app; el banco completo y las referencias están en `app/src/test/modelo.ts`.
 - Los grupos se sitúan solo con sus votos oficiales en las leyes vinculadas (escalado conjunto con votaciones; Bafumi y Herron, 2010). La afinidad usa distancia media por pregunta (Louwerse y Rosema, 2014).
 - Salvaguardas: ítems con redacción equilibrada (a favor y en contra) para limitar la aquiescencia (Krosnick, 1999); los grupos solo se sitúan en dimensiones con al menos dos leyes distintas; se advierte de la dinámica gobierno–oposición (Hix y Noury, 2016); no es una recomendación de voto y las respuestas no salen del dispositivo.

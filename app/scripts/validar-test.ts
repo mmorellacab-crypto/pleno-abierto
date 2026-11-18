@@ -10,8 +10,8 @@ import { afinidadVotos, coincide } from '../src/vota/calculo';
 
 const datos: Dataset = JSON.parse(readFileSync(path.join(__dirname, '../../assets/dataset.json'), 'utf8'));
 
-assert.equal(PREGUNTAS.length, 40, 'Debe haber 40 preguntas');
-assert.equal(new Set(PREGUNTAS.map((p) => p.id)).size, 40, 'Identificadores únicos');
+assert.equal(PREGUNTAS.length, 45, 'Debe haber 45 preguntas');
+assert.equal(new Set(PREGUNTAS.map((p) => p.id)).size, 45, 'Identificadores únicos');
 const refs = new Set(REFERENCIAS.map((r) => r.id));
 for (const p of PREGUNTAS) {
   for (const f of p.fuentes) assert.ok(refs.has(f), `${p.id}: fuente desconocida ${f}`);
@@ -72,4 +72,4 @@ const votosPP = Object.fromEntries(LEYES_VOTA.map((l) => [l.id, datos.leyes.find
 assert.equal(afinidadVotos(votosPP, datos)[0].pct, 100);
 console.log(`Vota tú también: ${LEYES_VOTA.length} leyes con resumen.`);
 
-console.log('\nOK: banco de 40 preguntas y cálculo coherentes.');
+console.log('\nOK: banco de 45 preguntas y cálculo coherentes.');

@@ -18,7 +18,7 @@ App Android **libre y gratuita** para ver, con filtros y colores, **qué votó c
 | **Vota tú también** | 20 leyes reales con resumen neutral (a partir del BOE): votas, ves el resultado real y tu coincidencia con cada grupo; tarjeta para compartir. |
 | **Mis diputados** | Diputados de tu provincia, su participación en las votaciones y su voto en cada ley. |
 | **Avisos** | Próximas votaciones anunciadas y notificaciones locales con el resultado. |
-| **Brújula** | Test de 40 preguntas basadas en escalas académicas; muestra tu perfil en 6 dimensiones, un mapa y tu coincidencia con cada grupo según sus votos reales. |
+| **Brújula** | Test de 45 preguntas basadas en escalas académicas; muestra tu perfil en 6 dimensiones, un mapa y tu coincidencia con cada grupo según sus votos reales. |
 | **Fuentes** | Atribuciones, licencias, aviso de no afiliación, privacidad y fecha de los datos. |
 
 Colores: azul = Sí, rojo = No, amarillo = Abstención, gris = Dividido / No vota (siempre con texto e icono, legibles con daltonismo).

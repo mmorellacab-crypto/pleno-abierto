@@ -1,6 +1,8 @@
 // Banco de preguntas del test «Brújula». Cada afirmación procede (adaptada y traducida) de
 // instrumentos usados en investigación revisada por pares, o sigue el formato de afirmación de las
 // aplicaciones de consejo de voto (VAA) cuando se refiere a una ley concreta. Ver REFERENCIAS.
+// 45 preguntas: además del acuerdo/desacuerdo, se usan preguntas de elección con coste («aunque…») y de
+// opciones graduadas, que dan respuestas más precisas y discriminantes (Saris et al., 2010).
 //
 // Convenciones:
 // - Respuesta del usuario en escala de acuerdo: -1 (muy en desacuerdo) … +1 (muy de acuerdo).
@@ -92,10 +94,16 @@ export const REFERENCIAS: Referencia[] = [
   { id: 'moreno2006', cita: 'Moreno, L. (2006). Scotland, Catalonia, Europeanization and the «Moreno question». Scottish Affairs, 54(1), 1–21.', url: 'https://ipp.csic.es/workpaper/scotland-catalonia-europeanization-moreno-question' },
   { id: 'navarro2015', cita: 'Navarro Ardoy, L. (2015). Las huellas electorales del nacionalismo español. Identificación territorial y voto en los partidos políticos de ámbito estatal, 1980-2013. Revista Internacional de Sociología, 73(1), e001.', url: 'https://doi.org/10.3989/ris.2012.02.12' },
   { id: 'krosnick1999', cita: 'Krosnick, J. A. (1999). Survey research. Annual Review of Psychology, 50, 537–567.', url: 'https://doi.org/10.1146/annurev.psych.50.1.537' },
+  { id: 'saris2010', cita: 'Saris, W. E., Revilla, M., Krosnick, J. A., y Shaeffer, E. M. (2010). Comparing questions with agree/disagree response options to questions with item-specific response options. Survey Research Methods, 4(1), 61–79.', url: 'https://doi.org/10.18148/srm/2010.v4i1.2682' },
+  { id: 'davis2004', cita: 'Davis, D. W., y Silver, B. D. (2004). Civil liberties vs. security: Public opinion in the context of the terrorist attacks on America. American Journal of Political Science, 48(1), 28–46.', url: 'https://econpapers.repec.org/RePEc:wly:amposc:v:48:y:2004:i:1:p:28-46' },
+  { id: 'vanoorschot2006', cita: 'van Oorschot, W. (2006). Making the difference in social Europe: Deservingness perceptions among citizens of European welfare states. Journal of European Social Policy, 16(1), 23–42.', url: 'https://doi.org/10.1177/0958928706059829' },
+  { id: 'reeskens2019', cita: 'Reeskens, T., y van der Meer, T. (2019). The inevitable deservingness gap: A study into the insurmountable immigrant penalty in perceived welfare deservingness. Journal of European Social Policy, 29(2), 166–181.', url: 'https://doi.org/10.1177/0958928718768335' },
+  { id: 'munoz2015', cita: 'Muñoz, J., y Tormos, R. (2015). Economic expectations and support for secession in Catalonia: Between causality and rationalization. European Political Science Review, 7(2), 315–341.', url: 'https://www.cambridge.org/core/journals/european-political-science-review/article/economic-expectations-and-support-for-secession-in-catalonia-between-causality-and-rationalization/B1621ED712D460228A4FF6ED95ABD975' },
+  { id: 'wvs', cita: 'Haerpfer, C., Inglehart, R., Moreno, A., Welzel, C., Kizilova, K., Diez-Medrano, J., Lagos, M., Norris, P., Ponarin, E., y Puranen, B. (eds.) (2022). World Values Survey: Round Seven. Pregunta sobre prioridad entre medio ambiente y crecimiento económico.', url: 'https://www.worldvaluessurvey.org' },
   { id: 'ess', cita: 'European Social Survey ERIC. Cuestionarios fuente de las rondas 1–11 (módulos básicos, inmigración, justicia y clima).', url: 'https://www.europeansocialsurvey.org/methodology/ess-methodology/source-questionnaire' },
   { id: 'issp', cita: 'International Social Survey Programme. Módulos «Role of Government» y «Family and Changing Gender Roles».', url: 'https://issp.org' },
   { id: 'evs', cita: 'European Values Study. Batería de justificabilidad (aborto, eutanasia).', url: 'https://europeanvaluesstudy.eu' },
-  { id: 'cis', cita: 'Centro de Investigaciones Sociológicas. Barómetros: preferencia sobre la organización territorial del Estado y sentimiento de identidad.', url: 'https://www.cis.es' },
+  { id: 'cis', cita: 'Centro de Investigaciones Sociológicas. Barómetros (organización territorial del Estado, sentimiento de identidad) y serie «Opinión pública y política fiscal» (escala servicios públicos–impuestos).', url: 'https://www.cis.es' },
 ];
 
 export type Tipo = 'likert' | 'par' | 'opciones';
@@ -140,7 +148,10 @@ const L = {
   moves: 'real-decreto-ley-3-2025-de-1-de-abril-por-el-que-se-establec',
   movilidad: 'proyecto-de-ley-de-movilidad-sostenible',
   desperdicio: 'proyecto-de-ley-de-prevencion-de-las-perdidas-y-el-desperdic-2',
+  desempleo: 'real-decreto-ley-2-2024-de-21-de-mayo-por-el-que-se-adoptan',
 };
+
+const ELECCION = 'Formato de elección entre dos opciones con posiciones intermedias: obliga a valorar un coste y reduce el sesgo de aquiescencia del formato acuerdo/desacuerdo (Saris et al., 2010).';
 
 const CRIANZA = 'Pregunta de valores de crianza (elegir entre dos cualidades), usada para medir la predisposición autoritaria.';
 
@@ -150,9 +161,10 @@ const BANCO: Pregunta[] = [
     texto: 'El Estado debería tomar medidas para reducir las diferencias de ingresos entre quienes más y quienes menos ganan.',
     nota: 'Traducción del ítem «gincdif» del cuestionario básico de la ESS.',
     leyes: [{ id: L.gravamen, sentido: 1 }] },
-  { id: 'E2', dim: 'eco', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['jolly2022', 'issp'],
-    texto: 'Bajar los impuestos a las grandes empresas es mejor para la economía que subirlos.',
-    nota: 'Adaptado de la dimensión de redistribución y desregulación del CHES y de la batería de impuestos del ISSP.',
+  { id: 'E2', dim: 'eco', tipo: 'par', clave: 1, origen: 'escala', fuentes: ['cis', 'issp', 'saris2010'],
+    texto: 'Unas personas creen que hay que mejorar los servicios públicos y las prestaciones aunque haya que pagar más impuestos; otras, que es mejor pagar menos impuestos aunque haya menos servicios. ¿Dónde te sitúas?',
+    opciones: ['Mejores servicios, aunque suban los impuestos', 'Menos impuestos, aunque haya menos servicios'],
+    nota: 'Pregunta de la serie del CIS «Opinión pública y política fiscal» (escala entre dos polos). ' + ELECCION,
     leyes: [{ id: L.gravamen, sentido: -1 }, { id: L.impuestoMinimo, sentido: -1 }] },
   { id: 'E3', dim: 'eco', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['issp', 'jaeger2006'],
     texto: 'Es responsabilidad del Estado garantizar una vivienda digna a quien no puede pagarla, aunque eso suponga limitar los alquileres.',
@@ -163,8 +175,8 @@ const BANCO: Pregunta[] = [
     nota: 'Afirmación pro-mercado construida a partir de la dimensión de desregulación del CHES (redacción inversa para equilibrar la escala).',
     leyes: [{ id: L.alquiler2026, sentido: -1 }, { id: L.vulnerabilidad, sentido: -1 }] },
   { id: 'E5', dim: 'eco', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['issp', 'jaeger2006'],
-    texto: 'Las pensiones públicas deberían subir cada año, como mínimo, lo mismo que los precios.',
-    nota: 'Adaptado del ítem «nivel de vida digno para las personas mayores» del ISSP «Role of Government».',
+    texto: 'Las pensiones públicas deberían subir cada año, como mínimo, lo mismo que los precios, aunque para pagarlo haya que subir cotizaciones o impuestos.',
+    nota: 'Adaptado del ítem «nivel de vida digno para las personas mayores» del ISSP «Role of Government»; se añade el coste para medir la intensidad del apoyo, no solo la preferencia.',
     leyes: [{ id: L.pensiones, sentido: 1 }] },
   { id: 'E6', dim: 'eco', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['issp', 'everett2013'],
     texto: 'Habría que reducir el gasto público, aunque eso suponga recortar algunos servicios.',
@@ -178,6 +190,10 @@ const BANCO: Pregunta[] = [
     texto: 'El Estado no debería intervenir en los precios de la energía: deberían fijarlos las empresas y el mercado.',
     nota: 'Adaptado del ítem «controlar los precios por ley» del ISSP «Role of Government» (redacción inversa).',
     leyes: [{ id: L.gravamen, sentido: -1 }] },
+  { id: 'E9', dim: 'eco', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['vanoorschot2006', 'issp'],
+    texto: 'Las ayudas a las personas en paro deberían llegar a más gente y ser más altas, aunque algunas personas las aprovechen sin buscar trabajo de verdad.',
+    nota: 'Construida con los criterios de merecimiento de van Oorschot (control y reciprocidad) y el ítem sobre el nivel de vida de los parados del ISSP «Role of Government»; el «aunque» introduce el coste que más divide a la opinión pública.',
+    leyes: [{ id: L.desempleo, sentido: 1 }] },
 
   // ── Valores sociales (GAL–TAN) ────────────────────────────
   { id: 'S1', dim: 'soc', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['ess', 'hooghe2002'],
@@ -196,17 +212,24 @@ const BANCO: Pregunta[] = [
     texto: 'El Estado debe promover el reconocimiento y la reparación de las víctimas de la Guerra Civil y de la dictadura.',
     nota: 'Afirmación en formato VAA sobre la ley vinculada; no procede de una escala previa.',
     leyes: [{ id: L.memoria, sentido: 1 }] },
-  { id: 'S5', dim: 'soc', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['knutsen1995', 'jolly2022'],
-    texto: 'La religión debería tener más peso en las decisiones públicas.',
-    nota: 'Basado en la orientación religioso-secular (Knutsen) y el ítem de principios religiosos del CHES.',
+  { id: 'S5', dim: 'soc', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['knutsen1995', 'jolly2022'],
+    texto: 'El Estado debería dejar de financiar a la Iglesia católica a través de la casilla del IRPF y de los acuerdos con la Santa Sede.',
+    nota: 'Basado en la orientación religioso-secular (Knutsen, 1995) y el ítem de principios religiosos del CHES, concretado en una política real para que la respuesta sea más informativa que una afirmación genérica.',
     leyes: [] },
   { id: 'S6', dim: 'soc', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['evs', 'knutsen1995'],
     texto: 'Una persona con una enfermedad grave e incurable debería poder pedir ayuda médica para morir.',
     nota: 'Adaptado del ítem de justificabilidad de la eutanasia de la European Values Study.',
     leyes: [] },
-  { id: 'S7', dim: 'soc', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['evs', 'knutsen1995'],
-    texto: 'El aborto debería ser un derecho garantizado por la sanidad pública.',
-    nota: 'Adaptado del ítem de justificabilidad del aborto de la European Values Study.',
+  { id: 'S7', dim: 'soc', tipo: 'opciones', clave: 1, origen: 'escala', fuentes: ['evs', 'issp', 'saris2010'],
+    texto: '¿En qué situaciones debería poder abortar legalmente una mujer?',
+    opciones: [
+      'Si lo decide, en las primeras semanas, y garantizado en la sanidad pública',
+      'Si lo decide, en las primeras semanas',
+      'Solo por violación, malformación grave o riesgo para su salud',
+      'Solo si su vida corre peligro',
+      'En ningún caso',
+    ],
+    nota: 'Escala de supuestos, como las baterías sobre el aborto de la EVS y del ISSP. Las opciones específicas distinguen posiciones intermedias mejor que el acuerdo/desacuerdo (Saris et al., 2010).',
     leyes: [] },
   { id: 'S8', dim: 'soc', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['everett2013', 'hooghe2002'],
     texto: 'La familia tradicional debería tener una protección especial del Estado frente a otros modelos de familia.',
@@ -234,11 +257,21 @@ const BANCO: Pregunta[] = [
     texto: 'Las prisiones deberían centrarse más en la reinserción que en el castigo.',
     nota: 'Adaptado del módulo «Trust in Justice» (ESS ronda 5), redacción inversa.',
     leyes: [{ id: L.reincidencia, sentido: -1 }] },
+  { id: 'A7', dim: 'aut', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['jackson2011', 'hix2016'],
+    texto: 'Los funcionarios de prisiones deberían tener la consideración legal de agentes de la autoridad, como la policía, para que agredirles se castigue con más dureza.',
+    nota: 'Adaptado de los ítems de legitimidad y autoridad de las instituciones de justicia del módulo «Trust in Justice» (ESS ronda 5). No se vincula a la ley sobre funcionarios de prisiones (2026) porque casi todos los grupos la apoyaron y, junto a la de multirreincidencia, situaría a los partidos por motivos de oportunidad política y no de fondo (Hix y Noury, 2016).',
+    leyes: [] },
+  { id: 'A8', dim: 'aut', tipo: 'par', clave: 1, origen: 'escala', fuentes: ['davis2004', 'saris2010'],
+    texto: 'Ante el riesgo de delitos graves o atentados, ¿qué te parece más importante?',
+    opciones: ['Proteger la privacidad y las libertades, aunque haya algo más de riesgo', 'Dar más poderes a la policía (cámaras, vigilancia, registros), aunque se limiten libertades'],
+    nota: 'Pregunta de compromiso entre libertades civiles y seguridad (Davis y Silver, 2004). ' + ELECCION,
+    leyes: [] },
 
   // ── Inmigración ───────────────────────────────────────────
-  { id: 'I1', dim: 'inm', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['ess', 'davidov2008'],
-    texto: 'España debería permitir que vengan a vivir y trabajar más personas de otros países.',
-    nota: 'Adaptado de los ítems «imdfetn/impcntr» de la ESS.',
+  { id: 'I1', dim: 'inm', tipo: 'opciones', clave: 1, origen: 'escala', fuentes: ['ess', 'davidov2008'],
+    texto: '¿A cuántas personas de países pobres de fuera de Europa debería permitir España venir a vivir aquí?',
+    opciones: ['A muchas', 'A algunas', 'A pocas', 'A ninguna'],
+    nota: 'Traducción del ítem «impcntr» de la ESS con sus cuatro opciones de respuesta originales.',
     leyes: [] },
   { id: 'I2', dim: 'inm', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['ess', 'davidov2008'],
     texto: 'En general, la inmigración es mala para la economía de España.',
@@ -259,6 +292,17 @@ const BANCO: Pregunta[] = [
   { id: 'I6', dim: 'inm', tipo: 'likert', clave: -1, origen: 'vaa', fuentes: ['garzia2012', 'davidov2008'],
     texto: 'Las personas inmigrantes en situación irregular que ya trabajan aquí deberían poder regularizar su situación.',
     nota: 'Afirmación en formato VAA; no hay ley de esta legislatura con voto final en los datos.',
+    leyes: [] },
+  { id: 'I7', dim: 'inm', tipo: 'opciones', clave: 1, origen: 'escala', fuentes: ['ess', 'reeskens2019'],
+    texto: 'Una persona que viene de otro país a vivir en España, ¿cuándo debería tener los mismos derechos a ayudas y servicios sociales que el resto?',
+    opciones: [
+      'Nada más llegar',
+      'Tras vivir aquí un año, trabaje o no',
+      'Solo tras trabajar y pagar impuestos al menos un año',
+      'Solo cuando obtenga la nacionalidad',
+      'Nunca',
+    ],
+    nota: 'Pregunta del módulo de inmigración de la ESS (ronda 7) sobre el acceso de los inmigrantes a las prestaciones; mide el «chovinismo del bienestar» (Reeskens y van der Meer, 2019).',
     leyes: [] },
 
   // ── Territorio ────────────────────────────────────────────
@@ -300,15 +344,15 @@ const BANCO: Pregunta[] = [
     texto: 'Infraestructuras estatales como algunas autopistas deberían poder transferirse a las comunidades autónomas.',
     nota: 'Adaptado del ítem de descentralización regional del CHES, aplicado a la ley vinculada.',
     leyes: [{ id: L.ap9, sentido: 1 }] },
+  { id: 'T7', dim: 'ter', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['cis', 'munoz2015'],
+    texto: 'Si una mayoría clara de los habitantes de una comunidad autónoma lo pidiera, debería poder celebrarse allí un referéndum pactado sobre la independencia.',
+    nota: 'Basado en las preguntas sobre el «derecho a decidir» de las encuestas del CIS y del Centre d\'Estudis d\'Opinió analizadas por Muñoz y Tormos (2015).',
+    leyes: [] },
 
   // ── Medio ambiente ────────────────────────────────────────
   { id: 'M1', dim: 'amb', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['dunlap2000'],
     texto: 'Si las cosas siguen como hasta ahora, pronto sufriremos una gran catástrofe ecológica.',
     nota: 'Traducción de un ítem pro-NEP de la escala revisada de Dunlap et al.',
-    leyes: [] },
-  { id: 'M2', dim: 'amb', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['dunlap2000'],
-    texto: 'Los seres humanos acabarán sabiendo lo suficiente sobre la naturaleza como para poder controlarla.',
-    nota: 'Traducción de un ítem anti-NEP de la escala revisada de Dunlap et al.',
     leyes: [] },
   { id: 'M3', dim: 'amb', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['poortinga2019', 'ess'],
     texto: 'El Estado debería subvencionar la compra de vehículos eléctricos.',
@@ -318,13 +362,18 @@ const BANCO: Pregunta[] = [
     texto: 'Las ciudades deberían limitar el uso del coche privado para reducir la contaminación.',
     nota: 'Adaptado de los ítems de apoyo a políticas climáticas de la ESS ronda 8.',
     leyes: [{ id: L.movilidad, sentido: 1 }] },
-  { id: 'M5', dim: 'amb', tipo: 'likert', clave: -1, origen: 'vaa', fuentes: ['garzia2012'],
-    texto: 'La ley debería obligar a supermercados y restaurantes a reducir el desperdicio de alimentos.',
-    nota: 'Afirmación en formato VAA sobre la ley vinculada.',
-    leyes: [{ id: L.desperdicio, sentido: 1 }] },
+  { id: 'M5', dim: 'amb', tipo: 'likert', clave: -1, origen: 'escala', fuentes: ['poortinga2019', 'ess'],
+    texto: 'Habría que subir los impuestos a la gasolina, el gasóleo y otros combustibles fósiles para reducir su consumo.',
+    nota: 'Traducción del ítem sobre impuestos a los combustibles fósiles del módulo de clima y energía de la ESS (ronda 8); es una de las políticas climáticas que más divide a la opinión pública europea (Poortinga et al., 2019).',
+    leyes: [] },
   { id: 'M6', dim: 'amb', tipo: 'likert', clave: 1, origen: 'escala', fuentes: ['poortinga2019', 'ess'],
     texto: 'La preocupación por el cambio climático está exagerada.',
     nota: 'Adaptado de los ítems de percepción del cambio climático de la ESS ronda 8 (redacción inversa).',
+    leyes: [] },
+  { id: 'M7', dim: 'amb', tipo: 'par', clave: 1, origen: 'escala', fuentes: ['wvs', 'saris2010'],
+    texto: 'Si hubiera que elegir, ¿qué debería tener prioridad?',
+    opciones: ['Proteger el medio ambiente, aunque frene el crecimiento y cueste algo de empleo', 'El crecimiento económico y el empleo, aunque el medio ambiente sufra en alguna medida'],
+    nota: 'Pregunta de la Encuesta Mundial de Valores (WVS) sobre la prioridad entre medio ambiente y crecimiento. ' + ELECCION,
     leyes: [] },
 ];
 
