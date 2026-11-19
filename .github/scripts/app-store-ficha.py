@@ -288,6 +288,18 @@ if os.environ.get('ENVIAR') == '1' and not PENDIENTE:
         if '_error' not in r or 'not ready to be submitted yet' not in r.get('_texto', ''):
             break
         print('  Apple todavía está procesando la versión; nuevo intento en 60 s')
+        if intento == 0:
+            v = api('GET', f'/v1/appStoreVersions/{VID}', ok_error=True).get('data') or {}
+            print('    estado de la versión:', (v.get('attributes') or {}).get('appStoreState'), '/', (v.get('attributes') or {}).get('appVersionState'))
+            print('    estado del envío:', sub['attributes'].get('state'), sub['id'])
+            for sc in api('GET', f"/v1/appScreenshotSets/{cset['id']}/appScreenshots", ok_error=True).get('data') or []:
+                print('    captura', sc['attributes'].get('fileName'), (sc['attributes'].get('assetDeliveryState') or {}).get('state'),
+                      (sc['attributes'].get('assetDeliveryState') or {}).get('errors'))
+            for it in api('GET', f"/v1/reviewSubmissions/{sub['id']}/items", ok_error=True).get('data') or []:
+                print('    elemento del envío:', it['attributes'].get('state'), it['id'])
+            todos = api('GET', f'/v1/reviewSubmissions?filter[app]={APP}&filter[platform]=IOS&limit=20', ok_error=True).get('data') or []
+            for x in todos:
+                print('    envío', x['id'], x['attributes'].get('state'), x['attributes'].get('submittedDate'))
         time.sleep(60)
     if '_error' in r:
         print('::error::Apple no ha aceptado el envío (¿falta «Privacidad de la app» en la web?):', r['_texto'][:1500])
