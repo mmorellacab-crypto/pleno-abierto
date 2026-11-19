@@ -236,7 +236,16 @@ for k, campo in (('contactEmail', 'email_revisor'), ('contactPhone', 'telefono_r
         contacto[k] = v
 rd = api('GET', f'/v1/appStoreVersions/{VID}/appStoreReviewDetail', ok_error=True)
 rd_id = (rd.get('data') or {}).get('id')
-attrs = {'demoAccountRequired': False, 'notes': F['notasRevisor']}
+notas = F['notasRevisor']
+video = (_ev.get('video_revisor') or os.environ.get('REVIEW_VIDEO', '')).strip()
+attrs = {'demoAccountRequired': False}
+if '[VIDEO_LINK]' in notas and not video:
+    # Sin enlace al vídeo no se tocan las notas, para no borrar uno puesto antes.
+    print('  notas sin cambios (falta el enlace al vídeo: parámetro video_revisor)')
+else:
+    if video:
+        print('::add-mask::' + video)
+    attrs['notes'] = notas.replace('[VIDEO_LINK]', video)
 if all(contacto.values()):
     attrs.update(contacto)
 if rd_id:

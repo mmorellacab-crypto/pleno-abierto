@@ -16,6 +16,10 @@ on:
         description: "Teléfono para el revisor de Apple, con prefijo +34 (no se publica)"
         type: string
         default: ''
+      video_revisor:
+        description: "Enlace al vídeo de la app para el revisor de Apple (no se publica ni se muestra en los registros)"
+        type: string
+        default: ''
 
 permissions:
   contents: read
