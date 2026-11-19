@@ -204,9 +204,18 @@ if not cset:
     cset = api('POST', '/v1/appScreenshotSets', {'data': {'type': 'appScreenshotSets',
                'attributes': {'screenshotDisplayType': 'APP_IPHONE_67'},
                'relationships': {'appStoreVersionLocalization': {'data': {'type': 'appStoreVersionLocalizations', 'id': vloc['id']}}}}})['data']
-for s in api('GET', f"/v1/appScreenshotSets/{cset['id']}/appScreenshots")['data']:
-    api('DELETE', f"/v1/appScreenshots/{s['id']}")
-for f in sorted(glob.glob('tienda/app-store/capturas/*.png')):
+locales = sorted(glob.glob('tienda/app-store/capturas/*.png'))
+existentes = api('GET', f"/v1/appScreenshotSets/{cset['id']}/appScreenshots")['data']
+iguales = ([s['attributes'].get('sourceFileChecksum') for s in existentes]
+           == [hashlib.md5(open(f, 'rb').read()).hexdigest() for f in locales])
+if iguales:
+    # Volver a subirlas obliga a Apple a procesarlas de nuevo y bloquea el envío a revisión un rato.
+    print('  sin cambios: no se vuelven a subir')
+    locales = []
+else:
+    for s in existentes:
+        api('DELETE', f"/v1/appScreenshots/{s['id']}")
+for f in locales:
     datos = open(f, 'rb').read()
     sc = api('POST', '/v1/appScreenshots', {'data': {'type': 'appScreenshots',
              'attributes': {'fileName': os.path.basename(f), 'fileSize': len(datos)},
@@ -271,8 +280,15 @@ if os.environ.get('ENVIAR') == '1' and not PENDIENTE:
         api('POST', '/v1/reviewSubmissionItems', {'data': {'type': 'reviewSubmissionItems', 'relationships': {
             'reviewSubmission': {'data': {'type': 'reviewSubmissions', 'id': sub['id']}},
             'appStoreVersion': {'data': {'type': 'appStoreVersions', 'id': VID}}}}})
-    r = api('PATCH', f"/v1/reviewSubmissions/{sub['id']}", {'data': {'type': 'reviewSubmissions', 'id': sub['id'],
-            'attributes': {'submitted': True}}}, ok_error=True)
+    # Si Apple aún está procesando algo (por ejemplo capturas recién subidas) responde
+    # «not ready to be submitted yet»: se espera y se reintenta durante unos 15 minutos.
+    for intento in range(16):
+        r = api('PATCH', f"/v1/reviewSubmissions/{sub['id']}", {'data': {'type': 'reviewSubmissions', 'id': sub['id'],
+                'attributes': {'submitted': True}}}, ok_error=True)
+        if '_error' not in r or 'not ready to be submitted yet' not in r.get('_texto', ''):
+            break
+        print('  Apple todavía está procesando la versión; nuevo intento en 60 s')
+        time.sleep(60)
     if '_error' in r:
         print('::error::Apple no ha aceptado el envío (¿falta «Privacidad de la app» en la web?):', r['_texto'][:1500])
         raise SystemExit(1)
