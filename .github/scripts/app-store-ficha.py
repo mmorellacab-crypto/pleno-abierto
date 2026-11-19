@@ -276,6 +276,13 @@ if os.environ.get('ENVIAR') == '1' and not PENDIENTE:
     sub = abiertos[0] if abiertos else api('POST', '/v1/reviewSubmissions', {'data': {'type': 'reviewSubmissions',
               'attributes': {'platform': 'IOS'}, 'relationships': {'app': {'data': {'type': 'apps', 'id': APP}}}}})['data']
     items = api('GET', f"/v1/reviewSubmissions/{sub['id']}/items", ok_error=True).get('data') or []
+    # Tras una respuesta de Apple (envío «UNRESOLVED_ISSUES»), cada elemento rechazado
+    # debe marcarse como resuelto antes de volver a enviar.
+    for it in items:
+        if it['attributes'].get('state') in ('REJECTED', 'UNRESOLVED') and not it['attributes'].get('resolved'):
+            api('PATCH', f"/v1/reviewSubmissionItems/{it['id']}", {'data': {'type': 'reviewSubmissionItems', 'id': it['id'],
+                'attributes': {'resolved': True}}})
+            print('  elemento rechazado marcado como resuelto')
     if not items:
         api('POST', '/v1/reviewSubmissionItems', {'data': {'type': 'reviewSubmissionItems', 'relationships': {
             'reviewSubmission': {'data': {'type': 'reviewSubmissions', 'id': sub['id']}},

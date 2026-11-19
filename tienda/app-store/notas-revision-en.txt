@@ -1,14 +1,14 @@
 1. SCREEN RECORDING
-Recorded on a physical iPhone running the latest iOS, starting from app launch: [VIDEO_LINK]
+Recorded on a physical iPad, starting from app launch (the app is designed for iPhone and runs on iPad in iPhone compatibility mode): [VIDEO_LINK]
 The app has no account registration, no login, no user-generated content and no paid content or in-app purchases.
 
 2. PURPOSE AND TARGET AUDIENCE
-Pleno Abierto is a free, ad-free civic information app (open source, GPL-3.0) for adults in Spain. It shows, visually and with colour-coded results, how each parliamentary group voted on each law and decree in the Spanish Congress of Deputies (Congreso de los Diputados). Official voting records are public but hard to read; the app makes them understandable at a glance and links every item to its official source. It is independent: it does not represent the Government, Parliament or any political party, and it does not recommend voting for anyone.
+Pleno Abierto is a free, ad-free civic information app (open source, GPL-3.0) for people interested in politics in Spain. It shows, visually and with colour-coded results, how each parliamentary group voted on each law and decree in the Spanish Congress of Deputies (Congreso de los Diputados). Official voting records are public but hard to read; the app makes them understandable at a glance and links every item to its official source. It is independent: it does not represent the Government, Parliament or any political party, and it does not recommend voting for anyone.
 
 3. HOW TO USE THE MAIN FEATURES (no setup or login needed)
 - Leyes (Laws): list of laws and decrees; filter by topic (housing, work, taxes...), party or result; tap a law to see how each group voted and a link to the official text.
 - Vota tú también (Vote yourself): read a neutral summary of a real law, cast your own vote, then see the real result and which groups voted like you.
-- Brújula (Compass): a 45-question political orientation test based on peer-reviewed survey scales; results compare the user's answers with how each group actually voted. Answers stay on the device.
+- Brújula (Compass): a 45-question political orientation test adapted from established survey questionnaires such as the European Social Survey and the CIS; results compare the user's answers with how each group actually voted. Answers stay on the device.
 - Mis diputados (My MPs): choose a province to see its deputies and their participation in plenary votes.
 - Más (More): parties, upcoming votes with optional LOCAL notifications (no push server, no account), sources, licences and privacy policy.
 
